@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>КВАНТОВЫЙ ГИПЕРВИХРЬ v6.1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08080f;--card:#12121e;--border:rgba(255,255,255,0.06);--text:#f0f0fa;--text2:rgba(255,255,255,0.7);--text3:rgba(255,255,255,0.3);--accent:#3b82f6;--accent2:#8b5cf6;--green:#34d399;--red:#f87171;--yellow:#fbbf24;--gold:#ffd700;--radius:12px}
+.theme-white{--bg:#f0f0f6;--card:#fff;--border:rgba(0,0,0,0.06);--text:#1a1a2e;--text2:rgba(0,0,0,0.6);--text3:rgba(0,0,0,0.25)}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,sans-serif;min-height:100vh;padding-bottom:120px;transition:.3s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.header{padding:16px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.logo{font-size:10px;color:var(--text3);letter-spacing:4px;text-transform:uppercase}
+.logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.title{font-size:20px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ai-badge{font-size:10px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:4px 14px;border-radius:20px;font-weight:600;display:inline-block;margin-left:8px}
+.ai-badge.locked{background:#666}
+.ai-badge.hyper{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+.tabs{display:flex;gap:4px;padding:6px 8px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:90;overflow-x:auto}
+.tab{flex:1;min-width:44px;padding:8px 4px;text-align:center;font-size:9px;font-weight:600;color:var(--text2);cursor:pointer;border-radius:8px;border:none;background:transparent}
+.tab.active{background:rgba(59,130,246,0.15);color:var(--accent);border:1px solid rgba(59,130,246,0.3)}
+.page{display:none;padding:12px;max-width:600px;margin:0 auto}
+.page.active{display:block}
+.inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+.inp:focus{border-color:var(--accent)}
+.inp-select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.3)' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+.label{font-size:10px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;display:block}
+.field{margin-bottom:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.q-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px}
+.q-inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 4px;color:var(--text);text-align:center;outline:none;font-size:14px}
+.q-inputs{display:flex;gap:6px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;width:100%}
+.btn:active{transform:scale(.96)}
+.btn.hyper{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;border-color:#3b82f6}
+.btn.gold{background:linear-gradient(135deg,#ffd700,#ff6b00);color:#000;border-color:#ffd700}
+.preview{display:none;background:var(--card);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius);padding:16px;margin:12px 0}
+.preview.show{display:block}
+.preview-total{font-size:34px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.vars{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.var-box{background:var(--bg);border-radius:8px;padding:6px;text-align:center;border:1px solid var(--border)}
+.var-val{font-size:11px;font-weight:700;color:var(--accent)}
+.multi-line-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.multi-item{background:var(--bg);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--border)}
+.multi-item.main{border-color:var(--accent)}
+.multi-item.perfect{border-color:#3b82f6;background:rgba(59,130,246,0.1)}
+.multi-bet{font-weight:700;margin:4px 0}
+.multi-bet.tm{color:var(--green)}
+.multi-bet.tb{color:var(--red)}
+.conf-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.conf-dot.high{background:var(--green)}
+.conf-dot.medium{background:var(--yellow)}
+.conf-dot.low{background:var(--red)}
+.conf-dot.perfect{background:#3b82f6}
+.multi-bar-wrap{width:100%;height:3px;background:var(--bg);border-radius:4px;overflow:hidden;margin-top:6px}
+.multi-bar{height:100%;border-radius:4px;transition:width .8s}
+.multi-bar.high{background:var(--green)}
+.multi-bar.medium{background:var(--yellow)}
+.multi-bar.low{background:var(--red)}
+.multi-bar.perfect{background:#3b82f6}
+.ai-card{display:none;background:var(--card);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius);padding:16px;margin:12px 0}
+.ai-card.show{display:block}
+.ai-card .status{font-size:8px;padding:2px 12px;border-radius:100px;background:rgba(52,211,153,0.1);color:var(--green);margin-left:auto;font-weight:600}
+.ai-card .status.perfect{background:rgba(59,130,246,0.2);color:#3b82f6}
+.voice-indicator{position:fixed;bottom:80px;right:20px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;z-index:99}
+.key-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999}
+.key-modal .modal-content{background:var(--card);padding:40px 30px;border-radius:20px;max-width:400px;width:90%;text-align:center}
+.key-modal .modal-content .error{color:var(--red);font-size:12px;margin-top:8px;display:none}
+.target-90{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;color:var(--text2)}
+.target-90 span{color:#3b82f6;font-weight:700;font-size:14px}
+.version-gold{background:linear-gradient(135deg,#ffd700,#ff6b00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+.bank-gold{color:#ffd700;font-weight:700;font-size:18px}
+.settings-version{text-align:center;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px}
+.settings-version .big{font-size:28px;font-weight:700;background:linear-gradient(135deg,#ffd700,#ff6b00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hyper-badge{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:2px 12px;border-radius:20px;font-size:8px;font-weight:700;display:inline-block;margin-left:8px}
+.locked-badge{background:#666;color:#999;padding:2px 12px;border-radius:20px;font-size:8px;font-weight:700;display:inline-block;margin-left:8px}
+.dots{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:6px 16px;background:var(--card);border-radius:100px;border:1px solid var(--border);z-index:100}
+.dots .dot{width:7px;height:7px;border-radius:50%;background:var(--text3);cursor:pointer}
+.dots .dot.active{background:linear-gradient(135deg,#3b82f6,#1d4ed8);transform:scale(1.5)}
+@media(max-width:480px){.row2,.row3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- Модалка ключа -->
+<div class="key-modal" id="keyModal">
+<div class="modal-content">
+<div style="font-size:48px;margin-bottom:10px;">🌀</div>
+<h2>Квантовый Гипервихрь</h2>
+<p>Введите ключ доступа для активации 90% режима</p>
+<input class="inp" id="keyInput" type="password" placeholder="🔑 Введите ключ" maxlength="10" autofocus>
+<div class="error" id="keyError">❌ Неверный ключ! Попробуйте снова.</div>
+<button class="btn hyper" onclick="validateKey()">🔓 Активировать</button>
+<div class="hint" style="color:var(--text3);font-size:10px;margin-top:12px;">💡 Подсказка: попробуйте <strong>123</strong></div>
+</div>
+</div>
+
+<!-- Хедер -->
+<div class="header">
+<div class="logo">🌀 <span>КВАНТОВЫЙ ГИПЕРВИХРЬ</span> · v6.1</div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap;">
+<span class="title">🌀 Квантовый Гипервихрь</span>
+<span class="ai-badge locked" id="aiBadge">🔒 90% AI</span>
+<span class="locked-badge" id="keyBadge">🔑 КЛЮЧ НЕ АКТИВИРОВАН</span>
+<span style="font-size:8px;color:var(--text3);margin-left:auto;" id="liveStatus">⚡ Live</span>
+</div>
+<div class="acc-bar" style="display:flex;align-items:center;gap:16px;margin-top:8px;">
+<div class="acc-num" id="accNum" style="font-size:30px;font-weight:700;color:var(--text3)">—</div>
+<div><div class="acc-label" style="font-size:10px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;">ТОЧНОСТЬ</div>
+<div class="acc-sub" id="accSub" style="font-size:10px;color:var(--text3);">нет данных</div></div>
+</div>
+</div>
+
+<!-- Вкладки -->
+<div class="tabs">
+<button class="tab active" data-tab="input" onclick="switchTab('input')"><span class="icon">📝</span> Ввод</button>
+<button class="tab" data-tab="history" onclick="switchTab('history')"><span class="icon">📋</span> История</button>
+<button class="tab" data-tab="stats" onclick="switchTab('stats')"><span class="icon">📊</span> Статистика</button>
+<button class="tab" data-tab="report" onclick="switchTab('report')"><span class="icon">📰</span> Отчёт</button>
+<button class="tab" data-tab="settings" onclick="switchTab('settings')"><span class="icon">⚙️</span> Настройки</button>
+</div>
+
+<!-- СТРАНИЦА ВВОД -->
+<div class="page active" id="page-input">
+<div class="target-90">🎯 <span>ЦЕЛЬ: 90% ТОЧНОСТИ</span> — Активируйте ключ 123 для полного доступа</div>
+<div style="display:flex;gap:8px;margin:12px 0;">
+<button class="tab active" data-match="0" onclick="switchMatch(0)" style="flex:1;">🏀 Матч 1</button>
+<button class="tab" data-match="1" onclick="switchMatch(1)" style="flex:1;">🏀 Матч 2</button>
+</div>
+<div id="matchContainer"></div>
+</div>
+
+<!-- СТРАНИЦА ИСТОРИЯ -->
+<div class="page" id="page-history">
+<input class="inp" id="searchInp" placeholder="🔍 Поиск команд..." style="margin-bottom:12px;" oninput="renderHistory()">
+<div class="filter-group" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+<button class="filter-btn active" data-filter="all" onclick="setFilter('all')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:10px;cursor:pointer;">Все</button>
+<button class="filter-btn" data-filter="tm" onclick="setFilter('tm')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:10px;cursor:pointer;">ТМ</button>
+<button class="filter-btn" data-filter="tb" onclick="setFilter('tb')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:10px;cursor:pointer;">ТБ</button>
+<button class="filter-btn" data-filter="win" onclick="setFilter('win')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:10px;cursor:pointer;">✅ Верно</button>
+<button class="filter-btn" data-filter="loss" onclick="setFilter('loss')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:10px;cursor:pointer;">❌ Неверно</button>
+</div>
+<div class="stats-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+<div class="stat-box" style="background:var(--card);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border);"><div class="stat-val" id="s-total" style="font-size:20px;font-weight:700;">0</div><div class="stat-lbl" style="font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">всего</div></div>
+<div class="stat-box" style="background:var(--card);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border);"><div class="stat-val" id="s-wins" style="font-size:20px;font-weight:700;">0</div><div class="stat-lbl" style="font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">верно</div></div>
+<div class="stat-box" style="background:var(--card);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border);"><div class="stat-val" id="s-acc" style="font-size:20px;font-weight:700;color:var(--text3);">—</div><div class="stat-lbl" style="font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">точность</div></div>
+<div class="stat-box" style="background:var(--card);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border);"><div class="stat-val" id="s-roi" style="font-size:20px;font-weight:700;">—</div><div class="stat-lbl" style="font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">ROI</div></div>
+</div>
+<div id="matchList"></div>
+</div>
+
+<!-- СТРАНИЦА СТАТИСТИКА -->
+<div class="page" id="page-stats">
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🌀 ГИПЕРВИХРЕВАЯ СТАТИСТИКА</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
+<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:var(--text3);">Средний V</div><div style="font-size:18px;font-weight:700;color:#3b82f6;" id="avgVortex">—</div></div>
+<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:var(--text3);">Средний Ω</div><div style="font-size:18px;font-weight:700;color:var(--yellow);" id="avgChaos">—</div></div>
+<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:var(--text3);">Средний T</div><div style="font-size:18px;font-weight:700;color:var(--green);" id="avgTensor">—</div></div>
+<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:var(--text3);">Факторы</div><div style="font-size:18px;font-weight:700;color:#8b5cf6;" id="avgFactors">—</div></div>
+</div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">📈 БАНКРОЛЛ</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+<div><div style="font-size:9px;color:var(--text3);">Текущий</div><div style="font-size:18px;font-weight:700;color:var(--green);" id="bankCurrent">1000</div></div>
+<div><div style="font-size:9px;color:var(--text3);">Изменение</div><div style="font-size:18px;font-weight:700;" id="bankChange">+0</div></div>
+<div><div style="font-size:9px;color:var(--text3);">Всего ставок</div><div style="font-size:18px;font-weight:700;" id="bankBets">0</div></div>
+</div>
+<div class="chart-bars" id="bankChart" style="display:flex;align-items:flex-end;gap:3px;height:50px;margin-top:8px;"></div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🔥 HEATMAP ЛИГ</div><div class="heatmap-grid" id="heatmapGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"></div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🧪 СРАВНЕНИЕ СТРАТЕГИЙ</div><div class="strategy-grid" id="strategyGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;"></div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">Серия</div>
+<div style="display:flex;justify-content:space-between;"><div><div style="font-size:10px;color:var(--text3);">Текущая</div><div style="font-size:20px;font-weight:700;" id="streakVal">—</div></div><div style="text-align:right;"><div style="font-size:10px;color:var(--text3);">Лучшая ✓</div><div style="font-size:20px;font-weight:700;color:#3b82f6;" id="bestStreak">—</div></div></div></div>
+</div>
+
+<!-- СТРАНИЦА ОТЧЁТ -->
+<div class="page" id="page-report">
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">📰 ГИПЕРВИХРЕВОЙ ОТЧЁТ</div><div id="dailyReportContent"><div style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0;">Добавьте матчи для гипер-отчёта</div></div></div>
+<button class="btn hyper" onclick="generateDailyReport()">🌀 Гипер-отчёт</button>
+<button class="btn" onclick="exportCSV()" style="margin-top:8px;">📊 Экспорт CSV</button>
+</div>
+
+<!-- СТРАНИЦА НАСТРОЙКИ -->
+<div class="page" id="page-settings">
+<div class="settings-version"><div class="big">🌀 КВАНТОВЫЙ ГИПЕРВИХРЬ</div><div class="sub" style="font-size:12px;color:var(--text3);margin-top:4px;"><span class="version-gold">v6.1</span> · ЦЕЛЬ 90%</div><div style="margin-top:12px;font-size:12px;color:var(--text3);">БАНК</div><div class="bank-gold" id="settingsBank">1000 юн.</div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🔑 КЛЮЧ ДОСТУПА</div><div style="display:flex;gap:8px;"><button class="btn gold" onclick="showKeyModal()" style="flex:1;">🔑 Активировать</button><button class="btn" onclick="deactivateKey()" style="flex:1;">🚫 Деактивировать</button></div><div style="margin-top:8px;font-size:10px;color:var(--text3);text-align:center;" id="keyStatusDisplay">🔒 Ключ не активирован</div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🎨 Тема</div><div class="theme-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="theme-btn t-dark" id="btn-dark" onclick="setTheme('dark')" style="padding:12px 8px;border-radius:8px;border:2px solid var(--border);cursor:pointer;text-align:center;font-size:11px;font-weight:600;background:var(--card);color:var(--text);"><div class="theme-dot" style="width:28px;height:28px;border-radius:50%;margin:0 auto 6px;background:linear-gradient(135deg,#08080f,#3b82f6);"></div>Тёмная</div><div class="theme-btn t-white" id="btn-white" onclick="setTheme('white')" style="padding:12px 8px;border-radius:8px;border:2px solid var(--border);cursor:pointer;text-align:center;font-size:11px;font-weight:600;background:var(--card);color:var(--text);"><div class="theme-dot" style="width:28px;height:28px;border-radius:50%;margin:0 auto 6px;background:linear-gradient(135deg,#f0f0f6,#3b82f6);"></div>Светлая</div></div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">⚙️ Гиперпараметры</div>
+<div class="field"><div class="label">Порог уверенности (%)</div><input class="inp" id="thresholdInput" type="number" value="15" step="1" onchange="updateThreshold()"></div>
+<div class="field"><div class="label">Средний тотал лиги (μ)</div><input class="inp" id="leagueAvg" type="number" value="95" step="0.5" onchange="updateLeagueAvg()"></div>
+<div class="field"><div class="label">Коэффициент (кэф)</div><input class="inp" id="oddInput" type="number" value="1.85" step="0.01" onchange="updateOdd()"></div>
+<div class="field"><div class="label">Квантовый бонус</div><input class="inp" id="quantumBonus" type="number" value="1.5" step="0.1" onchange="updateQuantumBonus()"></div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🔔 Уведомления</div>
+<div class="toggle-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span class="toggle-label" style="font-size:12px;color:var(--text2);">🔔 Уведомления</span><div class="toggle active" onclick="toggleSetting('notifications')" style="width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;"><div class="thumb" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:22px;transition:.3s;"></div></div></div>
+<div class="toggle-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span class="toggle-label" style="font-size:12px;color:var(--text2);">⏰ Напоминание о матчах</span><div class="toggle active" onclick="toggleSetting('matchReminder')" style="width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;"><div class="thumb" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:22px;transition:.3s;"></div></div></div>
+<div class="toggle-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span class="toggle-label" style="font-size:12px;color:var(--text2);">🚀 Сильный сигнал</span><div class="toggle active" onclick="toggleSetting('strongSignal')" style="width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;"><div class="thumb" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:22px;transition:.3s;"></div></div></div>
+<div class="toggle-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span class="toggle-label" style="font-size:12px;color:var(--text2);">🔊 Звук</span><div class="toggle active" onclick="toggleSetting('sound')" style="width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;"><div class="thumb" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:22px;transition:.3s;"></div></div></div></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">🗣️ Голосовой ассистент</div>
+<div class="toggle-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span class="toggle-label" style="font-size:12px;color:var(--text2);">🎤 Включить голос</span><div class="toggle active" onclick="toggleSetting('voice')" style="width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;"><div class="thumb" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:22px;transition:.3s;"></div></div></div>
+<div class="field"><div class="label">Скорость речи</div><input class="inp" id="voiceRate" type="range" min="0.5" max="2" step="0.1" value="1" onchange="updateVoiceConfig()"></div>
+<div class="field"><div class="label">Высота тона</div><input class="inp" id="voicePitch" type="range" min="0.5" max="2" step="0.1" value="1" onchange="updateVoiceConfig()"></div>
+<button class="btn" onclick="testVoice()">🔊 Тест голоса</button></div>
+<div class="card"><div style="font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:10px;">💾 Данные</div>
+<button class="btn" onclick="exportFullJSON()">📥 Скачать бэкап</button>
+<button class="btn" onclick="document.getElementById('importFile').click()" style="margin-top:8px;">📤 Восстановить</button>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importFullJSON(event)">
+<button class="btn" onclick="clearAllData()" style="margin-top:8px;background:rgba(248,113,113,0.1);color:var(--red);">🗑️ Очистить все данные</button></div>
+</div>
+
+<!-- Плавающая кнопка голоса -->
+<div class="voice-indicator" id="voiceIndicator" onclick="toggleVoice()">🌀</div>
+<div class="dots" id="pageDots"></div>
+
+<!-- ============================================================ -->
+<!-- ЧАСТЬ 2: JAVASCRIPT (вставь ниже) -->
+<!-- ============================================================ -->
+<script>
+// ============================================================
+// КВАНТОВЫЙ ГИПЕРВИХРЬ v6.1 — ПОЛНАЯ ЛОГИКА
+// ============================================================
+
+// --- КЛЮЧИ ---
+var KEY_UNLOCKED = false;
+var CORRECT_KEY = '123';
+
+function validateKey() {
+    var input = document.getElementById('keyInput').value.trim();
+    var error = document.getElementById('keyError');
+    if (input === CORRECT_KEY) {
+        KEY_UNLOCKED = true;
+        localStorage.setItem('hyper_key_unlocked', 'true');
+        error.style.display = 'none';
+        document.getElementById('keyModal').style.display = 'none';
+        activateKeyMode();
+        speak('🌀 Ключ 123 активирован! Цель 90 процентов!', 'urgent');
+    } else {
+        error.style.display = 'block';
+        document.getElementById('keyInput').value = '';
+        document.getElementById('keyInput').focus();
+        setTimeout(function() { error.style.display = 'none'; }, 3000);
+    }
+}
+
+function activateKeyMode() {
+    document.getElementById('aiBadge').className = 'ai-badge hyper';
+    document.getElementById('aiBadge').textContent = '🌀 90% AI';
+    document.getElementById('keyBadge').className = 'hyper-badge';
+    document.getElementById('keyBadge').textContent = '🔑 КЛЮЧ АКТИВИРОВАН';
+    document.getElementById('keyStatusDisplay').innerHTML = '🔑 <span style="color:#ffd700;font-weight:700;">Ключ 123 активирован! 90% режим включён!</span>';
+    for (var i = 0; i < 2; i++) {
+        var s = document.getElementById('aiStatus' + i);
+        if (s) { s.textContent = '🔥 активен'; s.className = 'status perfect'; }
+        var a = document.getElementById('aiAdvice' + i);
+        if (a) a.textContent = '🌀 Гипервихрь активирован! Заполните данные для анализа.';
+    }
+    sendNotification('🌀 Квантовый Гипервихрь', 'Ключ 123 активирован! Цель 90% достижима!', true);
+    calcPreview(0); calcPreview(1);
+}
+
+function deactivateKey() {
+    KEY_UNLOCKED = false;
+    localStorage.removeItem('hyper_key_unlocked');
+    document.getElementById('aiBadge').className = 'ai-badge locked';
+    document.getElementById('aiBadge').textContent = '🔒 90% AI';
+    document.getElementById('keyBadge').className = 'locked-badge';
+    document.getElementById('keyBadge').textContent = '🔑 КЛЮЧ НЕ АКТИВИРОВАН';
+    document.getElementById('keyStatusDisplay').innerHTML = '🔒 Ключ не активирован';
+    for (var i = 0; i < 2; i++) {
+        var s = document.getElementById('aiStatus' + i);
+        if (s) { s.textContent = '🔒 заблокирован'; s.className = 'status low'; }
+        var a = document.getElementById('aiAdvice' + i);
+        if (a) a.textContent = '🔑 Активируйте ключ 123 для полного доступа к AI-анализу';
+        var c = document.getElementById('aiConfidence' + i);
+        if (c) c.style.width = '0%';
+        var l = document.getElementById('aiConfLabel' + i);
+        if (l) l.textContent = '0%';
+    }
+}
+
+function showKeyModal() {
+    document.getElementById('keyModal').style.display = 'flex';
+    document.getElementById('keyInput').value = '';
+    document.getElementById('keyError').style.display = 'none';
+    setTimeout(function() { document.getElementById('keyInput').focus(); }, 100);
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && document.getElementById('keyModal').style.display !== 'none') validateKey();
+});
+
+function checkKeyOnLoad() {
+    if (localStorage.getItem('hyper_key_unlocked') === 'true') {
+        KEY_UNLOCKED = true;
+        document.getElementById('keyModal').style.display = 'none';
+        activateKeyMode();
+    } else {
+        setTimeout(function() { document.getElementById('keyModal').style.display = 'flex'; document.getElementById('keyInput').focus(); }, 500);
+    }
+}
+
+// --- localStorage полифилл ---
+(function() {
+    try { var t = '__test__'; localStorage.setItem(t, 'test'); localStorage.removeItem(t); } catch(e) {
+        var m = {};
+        window.localStorage = {
+            getItem: function(k) { return m[k] || null; },
+            setItem: function(k, v) { m[k] = String(v); },
+            removeItem: function(k) { delete m[k]; },
+            clear: function() { for (var k in m) delete m[k]; }
+        };
+    }
+})();
+
+// --- БАЗА ЛИГ ---
+var LEAGUES = {
+    China: { name: 'Китай', emoji: '🇨🇳', avg: 90, coef: 1.40, keywords: ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'shandong', 'пекин', 'шанхай'] },
+    Australia: { name: 'Австралия', emoji: '🇦🇺', avg: 88, coef: 1.50, keywords: ['melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'cairns'] },
+    Morocco: { name: 'Марокко', emoji: '🇲🇦', avg: 88, coef: 1.25, keywords: ['casablanca', 'tangier', 'rabat', 'kenitra'] },
+    Euroleague: { name: 'Евролига', emoji: '🇪🇺', avg: 95, coef: 1.20, keywords: ['real madrid', 'barcelona', 'panathinaikos', 'fenerbahce', 'anadolu', 'cska', 'maccabi', 'olympiacos'] },
+    NBA: { name: 'НБА', emoji: '🇺🇸', avg: 110, coef: 1.00, keywords: ['lakers', 'celtics', 'warriors', 'nets', 'bulls', 'heat', 'bucks', 'suns', 'nuggets', 'clippers', 'knicks'] },
+    Spain: { name: 'Испания', emoji: '🇪🇸', avg: 92, coef: 1.20, keywords: ['valencia', 'baskonia', 'unicaja', 'joventut', 'breogan', 'manresa', 'tenerife'] },
+    Turkey: { name: 'Турция', emoji: '🇹🇷', avg: 94, coef: 1.20, keywords: ['galatasaray', 'besiktas', 'darussafaka', 'pinar', 'karsiyaka', 'bursa', 'istanbul'] },
+    Germany: { name: 'Германия', emoji: '🇩🇪', avg: 92, coef: 1.15, keywords: ['bayern', 'berlin', 'bonn', 'ulm', 'ludwigsburg', 'frankfurt', 'hamburg', 'bamberg'] },
+    Greece: { name: 'Греция', emoji: '🇬🇷', avg: 90, coef: 1.20, keywords: ['olympiacos', 'panathinaikos', 'aek', 'paok', 'aris', 'peristeri', 'thessaloniki', 'athens'] },
+    Israel: { name: 'Израиль', emoji: '🇮🇱', avg: 92, coef: 1.20, keywords: ['maccabi', 'hapoel', 'jerusalem', 'netanya', 'holon', 'rishon'] },
+    Senegal: { name: 'Сенегал', emoji: '🇸🇳', avg: 85, coef: 1.15, keywords: ['dakar', 'douanes', 'saint louis', 'thies'] },
+    Korea: { name: 'Корея', emoji: '🇰🇷', avg: 88, coef: 1.30, keywords: ['sk knights', 'lg sakers', 'kcc egis', 'mobis', 'samsung', 'wonju', 'seoul'] },
+    Japan: { name: 'Япония', emoji: '🇯🇵', avg: 86, coef: 1.25, keywords: ['alvark', 'brave', 'sunrockers', 'akita', 'nagoya', 'ryukyu', 'levanga'] },
+    Brazil: { name: 'Бразилия', emoji: '🇧🇷', avg: 90, coef: 1.15, keywords: ['flamengo', 'pinheiros', 'franca', 'corinthians', 'paulista'] },
+    Italy: { name: 'Италия', emoji: '🇮🇹', avg: 92, coef: 1.20, keywords: ['milano', 'venezia', 'virtus', 'bologna', 'sassari', 'trento', 'napoli', 'brindisi'] },
+    France: { name: 'Франция', emoji: '🇫🇷', avg: 90, coef: 1.15, keywords: ['paris', 'monaco', 'lyon', 'strasbourg', 'asvel', 'villeurbanne', 'cholet'] },
+    Poland: { name: 'Польша', emoji: '🇵🇱', avg: 88, coef: 1.15, keywords: ['legia', 'wroclaw', 'slask', 'torun', 'gdansk'] }
+};
+
+function getLeagueByKeywords(teamA, teamB) {
+    var text = (teamA + ' ' + teamB).toLowerCase();
+    for (var key in LEAGUES) {
+        var kw = LEAGUES[key].keywords || [];
+        for (var i = 0; i < kw.length; i++) {
+            if (text.indexOf(kw[i]) !== -1) return key;
+        }
+    }
+    return null;
+}
+
+function getLeagueAvg(league, customAvg) {
+    if (league === 'custom') return parseFloat(customAvg) || 90;
+    if (league === 'auto' || !league) return 95;
+    return LEAGUES[league] ? LEAGUES[league].avg : 90;
+}
+
+function getLeagueCoef(league) {
+    if (league === 'custom' || league === 'auto' || !league) return 1.00;
+    return LEAGUES[league] ? LEAGUES[league].coef : 1.00;
+}
+
+// --- НАСТРОЙКИ ---
+var settings = { notifications: true, matchReminder: true, strongSignal: true, sound: true, vibration: true, voice: true };
+var quantumBonus = 1.5;
+
+function loadSettings() {
+    try {
+        var saved = localStorage.getItem('hyper_settings_v6');
+        if (saved) {
+            var parsed = JSON.parse(saved);
+            for (var key in parsed) {
+                if (settings.hasOwnProperty(key)) settings[key] = parsed[key];
+            }
+        }
+        var qb = localStorage.getItem('hyper_bonus_v6');
+        if (qb) quantumBonus = parseFloat(qb) || 1.5;
+        document.getElementById('quantumBonus').value = quantumBonus;
+    } catch (e) {}
+    updateToggles();
+}
+
+function saveSettings() {
+    try {
+        localStorage.setItem('hyper_settings_v6', JSON.stringify(settings));
+        localStorage.setItem('hyper_bonus_v6', quantumBonus);
+    } catch (e) {}
+}
+
+function updateQuantumBonus() {
+    quantumBonus = parseFloat(document.getElementById('quantumBonus').value) || 1.5;
+    saveSettings();
+    calcPreview(0);
+    calcPreview(1);
+}
+
+function toggleSetting(name) {
+    if (settings.hasOwnProperty(name)) {
+        settings[name] = !settings[name];
+        saveSettings();
+        updateToggles();
+        if (name === 'voice' && !settings.voice) {
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            document.getElementById('voiceIndicator').classList.remove('speaking');
+        }
+    }
+}
+
+function updateToggles() {
+    var toggles = document.querySelectorAll('.toggle');
+    var names = ['notifications', 'matchReminder', 'strongSignal', 'sound', 'vibration', 'voice'];
+    toggles.forEach(function(t, i) {
+        var key = names[i] || 'notifications';
+        if (settings.hasOwnProperty(key)) {
+            t.classList.toggle('active', settings[key]);
+            var thumb = t.querySelector('.thumb');
+            if (thumb) thumb.style.left = settings[key] ? '22px' : '2px';
+        }
+    });
+}
+
+// --- ГОЛОС ---
+var voiceConfig = { rate: 1, pitch: 1, volume: 1 };
+var isSpeaking = false;
+var audioCtx = null;
+
+function loadVoiceConfig() {
+    try {
+        var saved = localStorage.getItem('hyper_voice_config_v6');
+        if (saved) {
+            var parsed = JSON.parse(saved);
+            for (var key in parsed) {
+                if (voiceConfig.hasOwnProperty(key)) voiceConfig[key] = parsed[key];
+            }
+        }
+    } catch (e) {}
+    document.getElementById('voiceRate').value = voiceConfig.rate;
+    document.getElementById('voicePitch').value = voiceConfig.pitch;
+}
+
+function saveVoiceConfig() {
+    try { localStorage.setItem('hyper_voice_config_v6', JSON.stringify(voiceConfig)); } catch (e) {}
+}
+
+function updateVoiceConfig() {
+    voiceConfig.rate = parseFloat(document.getElementById('voiceRate').value);
+    voiceConfig.pitch = parseFloat(document.getElementById('voicePitch').value);
+    saveVoiceConfig();
+}
+
+function speak(text, priority) {
+    if (!settings.voice || !window.speechSynthesis) return;
+    if (priority !== 'urgent') window.speechSynthesis.cancel();
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = voiceConfig.rate;
+    utterance.pitch = voiceConfig.pitch;
+    utterance.volume = voiceConfig.volume;
+    var voices = window.speechSynthesis.getVoices();
+    var ruVoice = voices.find(function(v) { return v.lang.startsWith('ru'); });
+    if (ruVoice) utterance.voice = ruVoice;
+    utterance.onstart = function() { isSpeaking = true;
+        document.getElementById('voiceIndicator').classList.add('speaking'); };
+    utterance.onend = function() { isSpeaking = false;
+        document.getElementById('voiceIndicator').classList.remove('speaking'); };
+    window.speechSynthesis.speak(utterance);
+}
+
+function testVoice() {
+    if (KEY_UNLOCKED) speak('🌀 Квантовый Гипервихрь активирован! Ключ 123 принят. Цель 90 процентов!');
+    else speak('🌀 Квантовый Гипервихрь. Активируйте ключ 123 для полного доступа.');
+}
+
+function toggleVoice() {
+    if (isSpeaking) { window.speechSynthesis.cancel();
+        isSpeaking = false;
+        document.getElementById('voiceIndicator').classList.remove('speaking'); } else testVoice();
+}
+
+function announcePrediction(teams, bet, total, confidence) {
+    var msg = '🌀 Гипервихревой прогноз! Матч ' + teams + '. Рекомендация: ' + bet + ' ' + total.toFixed(1) +
+        '. Уверенность ' + Math.round(confidence) + ' процентов.';
+    if (confidence > 85) msg += ' Цель 90% близка! Рекомендую ставить!';
+    speak(msg, 'urgent');
+}
+
+// --- УВЕДОМЛЕНИЯ ---
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+}
+
+function sendNotification(title, body, vibrate) {
+    if (!settings.notifications) return;
+    if ('Notification' in window && Notification.permission === 'granted') {
+        var options = { body: body };
+        if (vibrate && settings.vibration) options.vibrate = [200, 100, 200];
+        new Notification(title, options);
+    }
+    if (settings.sound) playSound('notification');
+    if (vibrate && settings.vibration && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+}
+
+function playSound(type) {
+    try {
+        if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === 'notification') { osc.frequency.value = 800;
+            osc.type = 'sine';
+            gain.gain.value = 0.1;
+            osc.start();
+            setTimeout(function() { try { osc.stop(); } catch (e) {} }, 150); } else if (type === 'victory') { osc.frequency.value = 1000;
+            osc.type = 'sine';
+            gain.gain.value = 0.1;
+            osc.start();
+            setTimeout(function() { try { osc.frequency.value = 1200; } catch (e) {} setTimeout(function() { try { osc.stop(); } catch (e) {} }, 200); }, 200); } else if (type === 'defeat') { osc.frequency.value = 300;
+            osc.type = 'sawtooth';
+            gain.gain.value = 0.1;
+            osc.start();
+            setTimeout(function() { try { osc.stop(); } catch (e) {} }, 400); }
+    } catch (e) {}
+}
+
+function scheduleReminder(idx) {
+    var teamA = getMatchStr(idx, 'teamA') || 'Команда А';
+    var teamB = getMatchStr(idx, 'teamB') || 'Команда Б';
+    sendNotification('🌀 Гипер-напоминание!', teamA + ' — ' + teamB + ' через 15 минут', true);
+    speak('🌀 Напоминаю о матче ' + teamA + ' против ' + teamB + ' через 15 минут', 'urgent');
+}
+
+function notifyStrongSignal(teams, bet, confidence) {
+    if (!settings.strongSignal) return;
+    var title = '🌀 ГИПЕРВИХРЕВОЙ СИГНАЛ!';
+    var body = teams + ': ' + bet + ' с уверенностью ' + Math.round(confidence) + '%';
+    sendNotification(title, body, true);
+    speak(title + '. ' + body, 'urgent');
+    if (settings.sound) playSound('alert');
+}
+
+// --- ГИПЕРВИХРЕВАЯ ФОРМУЛА ---
+function hyperVortexFormula(data) {
+    var q1 = (data.q1a || 0) + (data.q1b || 0);
+    var q2 = (data.q2a || 0) + (data.q2b || 0);
+    var q3 = (data.q3a || 0) + (data.q3b || 0);
+    var q4 = (data.q4a || 0) + (data.q4b || 0);
+    var sumQ = q1 + q2 + q3 + q4;
+    var avg = data.leagueAvg || 95;
+    var coef = data.coef || 1;
+    var line = data.line || 0;
+
+    var q1Diff = Math.abs((data.q1a || 0) - (data.q1b || 0));
+    var q2Diff = Math.abs((data.q2a || 0) - (data.q2b || 0));
+    var q3Diff = Math.abs((data.q3a || 0) - (data.q3b || 0));
+    var q4Diff = Math.abs((data.q4a || 0) - (data.q4b || 0));
+
+    var vortexNumerator = (q1 * q3);
+    var vortexDenominator = (q2 + q4) || 1;
+    var vortexSin = (q2Diff > 0) ? Math.sin(Math.PI * q1Diff / q2Diff) : 0;
+    var V = (vortexNumerator / vortexDenominator) * vortexSin;
+    V = Math.max(-5, Math.min(5, V));
+
+    var teamATemp = (data.q1a || 0) + (data.q2a || 0) + (data.q3a || 0) + (data.q4a || 0);
+    var teamBTemp = (data.q1b || 0) + (data.q2b || 0) + (data.q3b || 0) + (data.q4b || 0);
+    var tempDiff = Math.abs(teamATemp - teamBTemp);
+    var Ω = tempDiff / (avg * 0.7);
+    Ω = Math.max(0, Math.min(2, Ω));
+
+    var P1 = q1Diff / 25;
+    var P2 = q2Diff / 20;
+    var P3 = (q3Diff + q4Diff) / 30;
+    var T = Math.pow(Math.max(0.001, P1 * P2 * P3), 1 / 3);
+    T = Math.max(0.1, Math.min(1, T));
+
+    var alpha1 = (q1 + q2) / avg;
+    var alpha2 = (q3 + q4) / avg;
+    var I = 1 + (alpha1 - alpha2) / (alpha1 + 0.01);
+    I = Math.max(0.5, Math.min(1.5, I));
+
+    var formA = parseFloat(data.formA) || 7;
+    var formB = parseFloat(data.formB) || 7;
+    var formFactor = 1 + ((formA + formB) / 20 - 0.7) * 0.3;
+    formFactor = Math.max(0.85, Math.min(1.15, formFactor));
+
+    var motivationHome = parseFloat(data.motivationHome) || 0.7;
+    var motivationAway = parseFloat(data.motivationAway) || 0.7;
+    var motivationFactor = 1 + ((motivationHome + motivationAway) / 2 - 0.7) * 0.3;
+    motivationFactor = Math.max(0.85, Math.min(1.15, motivationFactor));
+
+    var injuriesA = parseFloat(data.injuriesA) || 0.8;
+    var injuriesB = parseFloat(data.injuriesB) || 0.8;
+    var injuriesFactor = (injuriesA + injuriesB) / 2;
+    injuriesFactor = Math.max(0.7, Math.min(1, injuriesFactor));
+
+    var restHome = parseFloat(data.restHome) || 1;
+    var restAway = parseFloat(data.restAway) || 1;
+    var restFactor = (restHome + restAway) / 2;
+    restFactor = Math.max(0.8, Math.min(1.1, restFactor));
+
+    var homeSeries = parseFloat(data.homeSeries) || 1;
+    var tourFactor = parseFloat(data.tourFactor) || 1;
+    var travel = parseFloat(data.travel) || 0.95;
+    var travelFactor = travel;
+    var playoff = parseFloat(data.playoff) || 1;
+    var playoffFactor = playoff;
+    var referee = parseFloat(data.referee) || 1;
+    var refereeFactor = referee;
+
+    var totalFactor = formFactor * motivationFactor * injuriesFactor * restFactor * homeSeries * tourFactor * travelFactor * playoffFactor * refereeFactor;
+    totalFactor = Math.max(0.5, Math.min(1.6, totalFactor));
+
+    var homeFactor = 1;
+    if (data.homeTeam === 'home') homeFactor = 1.05;
+    else if (data.homeTeam === 'away') homeFactor = 0.95;
+
+    var h2hFactor = 1;
+    if (data.h2hAvg && data.h2hAvg > 0 && avg > 0) {
+        h2hFactor = data.h2hAvg / avg;
+        h2hFactor = Math.max(0.7, Math.min(1.3, h2hFactor));
+    }
+
+    var bonus = homeFactor * h2hFactor * coef * quantumBonus;
+    var quantumShift = (V / 100) * bonus;
+
+    var prediction = sumQ * (1 + Ω) * T * I * totalFactor + quantumShift;
+    prediction = prediction * coef * homeFactor * h2hFactor;
+    prediction = Math.max(10, prediction);
+
+    var deviation = line > 0 ? (Math.abs(prediction - line) / line * 100) : 0;
+    var bet = prediction < line ? 'ТМ' : 'ТБ';
+
+    var confidence = Math.min(90, Math.max(50, 50 + deviation * 1.2 + (1 - Ω) * 15 + (totalFactor - 1) * 20));
+    confidence = Math.min(90, Math.round(confidence));
+
+    var level = confidence >= 85 ? 'perfect' : confidence >= 70 ? 'high' : confidence >= 60 ? 'medium' : 'low';
+
+    return {
+        total: prediction,
+        half1: q1 + q2,
+        half2: q3 + q4,
+        half3: q3,
+        half4: q4,
+        bet: bet,
+        deviation: deviation,
+        confidence: confidence,
+        V: V,
+        Ω: Ω,
+        T: T,
+        I: I,
+        totalFactor: totalFactor,
+        level: level
+    };
+}
+
+// --- ОСНОВНЫЕ ФУНКЦИИ ---
+function getMatches() {
+    try { var d = localStorage.getItem('hyper_matches_v6'); return d ? JSON.parse(d) : []; } catch (e) { return []; }
+}
+
+function setMatches(m) {
+    try { localStorage.setItem('hyper_matches_v6', JSON.stringify(m)); } catch (e) {
+        if (e.name === 'QuotaExceededError' && m.length > 100) {
+            var trimmed = m.slice(0, 100);
+            try { localStorage.setItem('hyper_matches_v6', JSON.stringify(trimmed)); } catch (e2) {}
+        }
+    }
+}
+
+function getMatchVal(idx, field) {
+    var el = document.querySelector('.match-input[data-match="' + idx + '"][data-field="' + field + '"]');
+    if (!el) return NaN;
+    var v = parseFloat(el.value);
+    return isNaN(v) ? NaN : v;
+}
+
+function getMatchStr(idx, field) {
+    var el = document.querySelector('.match-input[data-match="' + idx + '"][data-field="' + field + '"]');
+    return el ? el.value : '';
+}
+
+function getMatchSelect(idx, field) {
+    var el = document.querySelector('.match-input[data-match="' + idx + '"][data-field="' + field + '"]');
+    return el ? el.value : '';
+}
+
+function getLeagueName(idx) { return getMatchSelect(idx, 'league') || 'auto'; }
+
+function getCustomLeagueAvg(idx) { return getMatchStr(idx, 'customLeagueAvg'); }
+
+function getHomeTeam(idx) { return getMatchSelect(idx, 'homeTeam') || ''; }
+
+function getH2HAvg(idx) { return getMatchVal(idx, 'h2hAvg'); }
+
+function getThreshold() {
+    try { var v = parseFloat(localStorage.getItem('hyper_threshold_v6')); return isNaN(v) ? 15 : v; } catch (e) { return 15; }
+}
+
+function getOdd() {
+    try { var v = parseFloat(localStorage.getItem('hyper_odd_v6')); return isNaN(v) ? 1.85 : v; } catch (e) { return 1.85; }
+}
+
+function getLeagueAvgValue() {
+    try { var v = parseFloat(localStorage.getItem('hyper_league_avg_v6')); return isNaN(v) ? 95 : v; } catch (e) { return 95; }
+}
+
+function autoDetectLeague(idx) {
+    var teamA = getMatchStr(idx, 'teamA') || '';
+    var teamB = getMatchStr(idx, 'teamB') || '';
+    var select = document.querySelector('.match-input[data-match="' + idx + '"][data-field="league"]');
+    var detectedEl = document.getElementById('detectedLeague' + idx);
+    if (select && select.value === 'auto') {
+        var league = getLeagueByKeywords(teamA, teamB);
+        if (league && detectedEl) {
+            detectedEl.textContent = '→ ' + LEAGUES[league].emoji + ' ' + LEAGUES[league].name;
+        } else if (detectedEl) {
+            detectedEl.textContent = '';
+        }
+        debouncedCalcPreview(idx);
+    }
+}
+
+var debounceTimers = {};
+
+function debouncedCalcPreview(idx) {
+    clearTimeout(debounceTimers[idx]);
+    debounceTimers[idx] = setTimeout(function() {
+        calcPreview(idx);
+        saveInputData();
+    }, 300);
+}
+
+var previewData = {};
+
+function calcPreview(idx) {
+    var q1a = getMatchVal(idx, 'q1a'),
+        q1b = getMatchVal(idx, 'q1b'),
+        q2a = getMatchVal(idx, 'q2a'),
+        q2b = getMatchVal(idx, 'q2b'),
+        q3a = getMatchVal(idx, 'q3a'),
+        q3b = getMatchVal(idx, 'q3b'),
+        q4a = getMatchVal(idx, 'q4a'),
+        q4b = getMatchVal(idx, 'q4b'),
+        line = getMatchVal(idx, 'line');
+
+    var league = getLeagueName(idx);
+    var customAvg = getCustomLeagueAvg(idx);
+    var homeTeam = getHomeTeam(idx);
+    var h2hAvg = getH2HAvg(idx);
+
+    var formA = getMatchStr(idx, 'formA') || '7';
+    var formB = getMatchStr(idx, 'formB') || '7';
+    var motivationHome = getMatchSelect(idx, 'motivationHome') || '0.7';
+    var motivationAway = getMatchSelect(idx, 'motivationAway') || '0.7';
+    var injuriesA = getMatchSelect(idx, 'injuriesA') || '0.8';
+    var injuriesB = getMatchSelect(idx, 'injuriesB') || '0.8';
+    var restHome = getMatchSelect(idx, 'restHome') || '1';
+    var restAway = getMatchSelect(idx, 'restAway') || '1';
+    var homeSeries = getMatchSelect(idx, 'homeSeries') || '1';
+    var tourFactor = getMatchSelect(idx, 'tourFactor') || '1';
+    var travel = getMatchSelect(idx, 'travel') || '0.95';
+    var playoff = getMatchSelect(idx, 'playoff') || '1';
+    var referee = getMatchSelect(idx, 'referee') || '1';
+
+    var preview = document.getElementById('preview' + idx);
+    if (!preview) return;
+
+    var hasData = !isNaN(q1a) && !isNaN(q1b) && !isNaN(q2a) && !isNaN(q2b) && !isNaN(line);
+    if (!hasData) {
+        preview.classList.remove('show');
+        var saveBtn = document.getElementById('saveBtn' + idx);
+        if (saveBtn) saveBtn.disabled = true;
+        previewData[idx] = null;
+        return;
+    }
+
+    var avg = getLeagueAvg(league, customAvg);
+    var coef = getLeagueCoef(league);
+
+    var data = {
+        q1a: q1a,
+        q1b: q1b,
+        q2a: q2a,
+        q2b: q2b,
+        q3a: q3a,
+        q3b: q3b,
+        q4a: q4a,
+        q4b: q4b,
+        line: line,
+        league: league,
+        leagueAvg: avg,
+        coef: coef,
+        homeTeam: homeTeam,
+        h2hAvg: h2hAvg,
+        formA: parseFloat(formA),
+        formB: parseFloat(formB),
+        motivationHome: parseFloat(motivationHome),
+        motivationAway: parseFloat(motivationAway),
+        injuriesA: parseFloat(injuriesA),
+        injuriesB: parseFloat(injuriesB),
+        restHome: parseFloat(restHome),
+        restAway: parseFloat(restAway),
+        homeSeries: parseFloat(homeSeries),
+        tourFactor: parseFloat(tourFactor),
+        travel: parseFloat(travel),
+        playoff: parseFloat(playoff),
+        referee: parseFloat(referee)
+    };
+
+    var result = hyperVortexFormula(data);
+    var threshold = getThreshold();
+    var decision = result.deviation >= threshold ? '✅ СТАВИТЬ' : '⏸️ ПРОПУСТИТЬ';
+
+    document.getElementById('p-total' + idx).textContent = Math.round(result.total * 10) / 10;
+    document.getElementById('p-half1-' + idx).textContent = Math.round(result.half1 * 10) / 10;
+    document.getElementById('p-half2-' + idx).textContent = Math.round(result.half2 * 10) / 10;
+    document.getElementById('p-q3-' + idx).textContent = Math.round(result.half3 * 10) / 10;
+    document.getElementById('p-q4-' + idx).textContent = Math.round(result.half4 * 10) / 10;
+
+    var betEl = document.getElementById('p-bet' + idx);
+    betEl.textContent = result.bet + ' ' + line;
+    betEl.className = 'preview-bet ' + (result.bet === 'ТМ' ? 'bet-tm' : 'bet-tb');
+
+    document.getElementById('p-deviation' + idx).textContent = Math.round(result.deviation) + '%';
+    document.getElementById('p-confidence' + idx).textContent = result.confidence + '%';
+
+    var decEl = document.getElementById('p-decision' + idx);
+    decEl.textContent = decision;
+    decEl.style.color = result.deviation >= threshold ? 'var(--green)' : 'var(--yellow)';
+
+    document.getElementById('p-vortex' + idx).textContent = 'V ' + (Math.round(result.V * 100) / 100);
+    document.getElementById('p-chaos' + idx).textContent = (Math.round(result.Ω * 100) / 100);
+    document.getElementById('p-tensor' + idx).textContent = (Math.round(result.T * 100) / 100);
+    document.getElementById('p-inertia' + idx).textContent = (Math.round(result.I * 100) / 100);
+    document.getElementById('p-factors' + idx).textContent = (Math.round(result.totalFactor * 100) / 100);
+
+    preview.classList.add('show');
+    var saveBtn = document.getElementById('saveBtn' + idx);
+    if (saveBtn) saveBtn.disabled = false;
+
+    var mainEl = document.getElementById('multiMain' + idx);
+    if (mainEl) {
+        if (result.confidence >= 85) mainEl.className = 'multi-item perfect';
+        else mainEl.className = 'multi-item ' + (result.deviation >= threshold ? 'main' : 'skip');
+    }
+
+    previewData[idx] = {
+        half1: result.half1,
+        half2: result.half2,
+        half3: result.half3,
+        half4: result.half4,
+        total: result.total,
+        V: result.V,
+        Ω: result.Ω,
+        T: result.T,
+        I: result.I,
+        totalFactor: result.totalFactor,
+        bet: result.bet,
+        line: line,
+        league: league,
+        leagueAvg: avg,
+        coef: coef,
+        q1a: q1a,
+        q1b: q1b,
+        q2a: q2a,
+        q2b: q2b,
+        q3a: q3a,
+        q3b: q3b,
+        q4a: q4a,
+        q4b: q4b,
+        deviation: result.deviation,
+        decision: decision,
+        threshold: threshold,
+        confidence: result.confidence,
+        homeFactor: result.homeFactor || 1,
+        h2hFactor: result.h2hFactor || 1,
+        homeTeam: homeTeam,
+        h2hAvg: h2hAvg,
+        teamA: getMatchStr(idx, 'teamA'),
+        teamB: getMatchStr(idx, 'teamB'),
+        formA: parseFloat(formA),
+        formB: parseFloat(formB),
+        motivationHome: parseFloat(motivationHome),
+        motivationAway: parseFloat(motivationAway),
+        injuriesA: parseFloat(injuriesA),
+        injuriesB: parseFloat(injuriesB),
+        restHome: parseFloat(restHome),
+        restAway: parseFloat(restAway),
+        homeSeries: parseFloat(homeSeries),
+        tourFactor: parseFloat(tourFactor),
+        travel: parseFloat(travel),
+        playoff: parseFloat(playoff),
+        referee: parseFloat(referee),
+        level: result.level
+    };
+
+    updateMultiLine(idx, result.total, line, result.deviation, threshold, result.confidence);
+    runAIAnalysis(idx);
+
+    if (KEY_UNLOCKED && result.deviation >= threshold && result.confidence > 80) {
+        var teams = (getMatchStr(idx, 'teamA') || 'Команда А') + ' — ' + (getMatchStr(idx, 'teamB') || 'Команда Б');
+        notifyStrongSignal(teams, result.bet, result.confidence);
+        if (settings.voice) announcePrediction(teams, result.bet, result.total, result.confidence);
+    }
+}
+
+function updateMultiLine(idx, total, line, deviation, threshold, confidence) {
+    if (total === undefined || line === undefined || isNaN(total) || isNaN(line)) {
+        for (var i = 0; i < 3; i++) {
+            var b = document.getElementById('ml' + (i + 1) + '-' + idx);
+            if (b) b.textContent = '—';
+            var ba = document.getElementById('multiBar' + (i + 1) + '-' + idx);
+            if (ba) ba.style.width = '0%';
+        }
+        return;
+    }
+    var lines = [line - 2, line, line + 2];
+    for (var j = 0; j < 3; j++) {
+        var l = lines[j],
+            bet = total < l ? 'ТМ' : 'ТБ',
+            diff = Math.abs(total - l),
+            conf = Math.max(50, Math.min(90, Math.round(90 - diff * 0.5)));
+        var isMain = (j === 1),
+            showSkip = isMain && deviation < threshold;
+        var b2 = document.getElementById('ml' + (j + 1) + '-' + idx);
+        if (b2) {
+            b2.textContent = showSkip ? '⏸️ ПРОПУСК' : bet + ' ' + l;
+            b2.className = 'multi-bet ' + (showSkip ? 'skip' : bet === 'ТМ' ? 'tm' : 'tb');
+            if (conf >= 85 && !showSkip) b2.className = 'multi-bet perfect';
+        }
+        var mc = document.getElementById('mc' + (j + 1) + '-' + idx);
+        if (mc) mc.textContent = showSkip ? 'Пропуск' : conf + '%';
+        var dot = document.getElementById('confDot' + (j + 1) + '-' + idx);
+        if (dot) {
+            if (showSkip) { dot.className = 'conf-dot';
+                dot.style.background = 'var(--yellow)'; } else if (conf >= 85) dot.className = 'conf-dot perfect';
+            else dot.className = 'conf-dot ' + (conf >= 70 ? 'high' : conf >= 60 ? 'medium' : 'low');
+        }
+        var bar = document.getElementById('multiBar' + (j + 1) + '-' + idx);
+        if (bar) {
+            bar.style.width = (showSkip ? 30 : conf) + '%';
+            if (conf >= 85 && !showSkip) bar.className = 'multi-bar perfect';
+            else bar.className = 'multi-bar ' + (showSkip ? 'low' : conf >= 70 ? 'high' : conf >= 60 ? 'medium' : 'low');
+        }
+    }
+}
+
+// --- AI ---
+function HyperAI() {
+    this.weights = this.loadWeights();
+}
+
+HyperAI.prototype.loadWeights = function() {
+    try { var d = localStorage.getItem('hyper_ai_weights_v6'); return d ? JSON.parse(d) : { vortex: 0.2, chaos: 0.15, tensor: 0.15, inertia: 0.1, factors: 0.2, trend: 0.1, bias: 0.1 }; } catch (e) { return { vortex: 0.2, chaos: 0.15, tensor: 0.15, inertia: 0.1, factors: 0.2, trend: 0.1, bias: 0.1 }; }
+};
+
+HyperAI.prototype.saveWeights = function() {
+    try { localStorage.setItem('hyper_ai_weights_v6', JSON.stringify(this.weights)); } catch (e) {}
+};
+
+HyperAI.prototype.getTrend = function() {
+    var m = getMatches(),
+        r = m.slice(0, 10);
+    if (r.length < 3) return 0.5;
+    var c = 0;
+    for (var i = 0; i < r.length; i++) { if (r[i].correct === true) c++; }
+    return c / r.length;
+};
+
+HyperAI.prototype.predict = function(data) {
+    var w = this.weights;
+    var score = w.vortex * (data.V + 1) / 2 + w.chaos * (1 - data.Ω) + w.tensor * data.T + w.inertia * data.I + w.factors * data.totalFactor + w.trend * this.getTrend() + w.bias;
+    var confidence = Math.min(90, Math.max(50, 50 + score * 35));
+    return Math.round(confidence);
+};
+
+HyperAI.prototype.train = function() {
+    var m = getMatches(),
+        r = [];
+    for (var i = 0; i < m.length; i++) { if (m[i].correct !== null) r.push(m[i]); }
+    if (r.length < 5) return;
+    var w = 0;
+    for (var j = 0; j < r.length; j++) { if (r[j].correct) w++; }
+    var a = w / r.length;
+    this.weights.vortex = 0.1 + a * 0.3;
+    this.weights.chaos = 0.05 + a * 0.25;
+    this.weights.tensor = 0.05 + a * 0.25;
+    this.weights.inertia = 0.05 + a * 0.15;
+    this.weights.factors = 0.1 + a * 0.3;
+    this.weights.trend = 0.05 + a * 0.15;
+    this.weights.bias = (a - 0.5) * 0.2;
+    this.saveWeights();
+};
+
+HyperAI.prototype.analyze = function(idx) {
+    var data = previewData ? previewData[idx] : null;
+    if (!data) return { advice: 'Заполните данные для гипер-анализа', confidence: 0, tags: ['нет данных'] };
+
+    if (!KEY_UNLOCKED) {
+        return {
+            advice: '🔑 Активируйте ключ 123 для полного доступа к AI-анализу. Без ключа точность ограничена.',
+            confidence: 0,
+            tags: ['🔒 заблокировано', 'ключ 123']
+        };
+    }
+
+    var conf = this.predict(data),
+        diff = Math.abs(data.total - data.line),
+        threshold = getThreshold();
+    var deviation = data.line > 0 ? (diff / data.line * 100) : 0,
+        advice = '',
+        tags = [];
+
+    if (deviation < threshold) {
+        advice = '⏸️ Отклонение ' + Math.round(deviation) + '% < порога ' + threshold + '%. Гипер-пропуск.';
+        tags.push('⏸️ пропуск');
+    } else if (data.bet === 'ТМ' && diff > 0) {
+        advice = '📉 Гипер-ТМ с запасом ' + Math.round(deviation) + '%. Ставка.';
+        tags.push('📉 ТМ ' + Math.round(deviation) + '%');
+    } else if (data.bet === 'ТБ' && diff > 0) {
+        advice = '📈 Гипер-ТБ с запасом ' + Math.round(deviation) + '%. Ставка.';
+        tags.push('📈 ТБ ' + Math.round(deviation) + '%');
+    } else {
+        advice = '⚖️ Отклонение ' + Math.round(deviation) + '%. Гипер-анализ.';
+        tags.push('⚖️ средний');
+    }
+
+    if (data.V > 1) { advice += ' 🔥 Вихревой импульс сильный!';
+        tags.push('🌀 V=' + Math.round(data.V * 100) / 100); }
+    if (data.Ω < 0.3) { advice += ' 🎯 Хаос низкий';
+        tags.push('🎯 Ω=' + Math.round(data.Ω * 100) / 100); }
+    if (data.T > 0.5) { advice += ' 💪 Высокое давление';
+        tags.push('💪 T=' + Math.round(data.T * 100) / 100); }
+    if (data.totalFactor > 1.1) { advice += ' 🚀 Факторы усиливают';
+        tags.push('🚀 Ф=' + Math.round(data.totalFactor * 100) / 100); }
+    if (data.confidence >= 85) { advice += ' 🎯 ЦЕЛЬ 90% БЛИЗКА!';
+        tags.push('🎯 90% цель'); }
+
+    if (data.homeFactor > 1) tags.push('🏠 арена +5%');
+    if (data.h2hFactor && data.h2hFactor !== 1) tags.push('📊 H2H ' + Math.round(data.h2hFactor * 100) + '%');
+    if (data.homeSeries > 1.02) tags.push('🏠 серия ' + Math.round(data.homeSeries * 100) + '%');
+    if (data.tourFactor < 0.97) tags.push('✈️ турне ' + Math.round(data.tourFactor * 100) + '%');
+    if (KEY_UNLOCKED) tags.push('🔑 ключ 123 активирован');
+
+    return { advice: advice, confidence: conf, tags: tags };
+};
+
+var hyperAI = new HyperAI();
+
+function runAIAnalysis(idx) {
+    calcPreview(idx);
+    var advisor = document.getElementById('aiAdvisor' + idx);
+    if (!advisor) return;
+    var data = previewData[idx];
+    if (!data) { advisor.classList.remove('show'); return; }
+    advisor.classList.add('show');
+    var res = hyperAI.analyze(idx);
+    document.getElementById('aiAdvice' + idx).textContent = res.advice;
+    document.getElementById('aiConfidence' + idx).style.width = res.confidence + '%';
+    document.getElementById('aiConfLabel' + idx).textContent = res.confidence + '%';
+    var status = document.getElementById('aiStatus' + idx);
+    if (status) {
+        if (!KEY_UNLOCKED) { status.textContent = '🔒 заблокирован';
+            status.className = 'status low'; } else if (res.confidence >= 85) { status.textContent = '🎯 90% цель';
+            status.className = 'status perfect'; } else if (res.confidence > 70) { status.textContent = '🔥 высокий';
+            status.className = 'status'; } else if (res.confidence > 60) { status.textContent = '⚖️ средний';
+            status.className = 'status medium'; } else { status.textContent = '⚠️ низкий';
+            status.className = 'status low'; }
+    }
+    var tagsEl = document.getElementById('aiTags' + idx);
+    if (tagsEl) {
+        var h = '';
+        for (var i = 0; i < res.tags.length; i++) {
+            var cls = res.tags[i].includes('90%') || res.tags[i].includes('ключ') ? 'tag hyper' : 'tag';
+            h += '<span class="' + cls + '" style="font-size:8px;padding:3px 12px;border-radius:100px;background:var(--bg);color:var(--text2);border:1px solid var(--border);' + (res.tags[i].includes('90%') || res.tags[i].includes('ключ') ? 'background:rgba(59,130,246,0.1);color:#3b82f6;border-color:rgba(59,130,246,0.2);' : '') + '">🌀 ' + res.tags[i] + '</span>';
+        }
+        tagsEl.innerHTML = h;
+    }
+}
+
+// --- СОХРАНЕНИЕ МАТЧА ---
+function saveMatch(idx) {
+    var data = previewData[idx];
+    if (!data) { alert('❌ Нет данных'); return; }
+
+    var actualEl = document.querySelector('.match-input[data-match="' + idx + '"][data-field="actual"]');
+    var actual = actualEl && actualEl.value !== '' && !isNaN(+actualEl.value) ? +actualEl.value : null;
+    var correct = actual !== null ? (data.bet === 'ТМ' ? actual < data.line : actual > data.line) : null;
+    var odd = getOdd();
+
+    var match = {
+        id: Date.now() + idx,
+        date: new Date().toLocaleDateString('ru'),
+        time: new Date().toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }),
+        teamA: data.teamA || 'Команда А',
+        teamB: data.teamB || 'Команда Б',
+        league: data.league || 'auto',
+        half1: data.half1,
+        half2: data.half2,
+        half3: data.half3,
+        half4: data.half4,
+        total: data.total,
+        line: data.line,
+        bet: data.bet,
+        V: data.V || 0,
+        Ω: data.Ω || 0,
+        T: data.T || 0,
+        I: data.I || 0,
+        totalFactor: data.totalFactor || 1,
+        actual: actual,
+        correct: correct,
+        q1a: data.q1a,
+        q1b: data.q1b,
+        q2a: data.q2a,
+        q2b: data.q2b,
+        q3a: data.q3a,
+        q3b: data.q3b,
+        q4a: data.q4a,
+        q4b: data.q4b,
+        deviation: data.deviation || 0,
+        decision: data.decision || '—',
+        threshold: data.threshold || 15,
+        confidence: data.confidence || 0,
+        homeFactor: data.homeFactor || 1,
+        h2hFactor: data.h2hFactor || 1,
+        formA: data.formA || 7,
+        formB: data.formB || 7,
+        motivationHome: data.motivationHome || 0.7,
+        motivationAway: data.motivationAway || 0.7,
+        injuriesA: data.injuriesA || 0.8,
+        injuriesB: data.injuriesB || 0.8,
+        restHome: data.restHome || 1,
+        restAway: data.restAway || 1,
+        homeSeries: data.homeSeries || 1,
+        tourFactor: data.tourFactor || 1,
+        travel: data.travel || 0.95,
+        playoff: data.playoff || 1,
+        referee: data.referee || 1,
+        level: data.level || 'medium',
+        keyUnlocked: KEY_UNLOCKED
+    };
+
+    var matches = getMatches();
+    matches.unshift(match);
+    setMatches(matches);
+
+    // Стратегии
+    var strategies = [
+        { id: 'conservative', name: 'Консервативная', threshold: 20, minConfidence: 70, stakeSize: 2 },
+        { id: 'moderate', name: 'Умеренная', threshold: 15, minConfidence: 65, stakeSize: 4 },
+        { id: 'aggressive', name: 'Агрессивная', threshold: 10, minConfidence: 60, stakeSize: 6 }
+    ];
+    var strategyResults = {};
+    try {
+        var sd = localStorage.getItem('hyper_strategy_data_v6');
+        if (sd) { var parsed = JSON.parse(sd);
+            strategyResults = parsed.results || {}; }
+    } catch (e) {}
+    strategies.forEach(function(s) {
+        if (!strategyResults[s.id]) strategyResults[s.id] = { totalBets: 0, wins: 0, loss: 0, bankroll: 1000 };
+    });
+    if (correct !== null) {
+        strategies.forEach(function(s) {
+            var shouldBet = data.deviation >= s.threshold && data.confidence >= s.minConfidence;
+            var stake = shouldBet ? (strategyResults[s.id].bankroll * s.stakeSize / 100) : 0;
+            if (shouldBet) {
+                var r = strategyResults[s.id];
+                r.totalBets++;
+                if (correct) { r.wins++;
+                    r.bankroll += stake * (odd - 1); } else { r.loss++;
+                    r.bankroll -= stake; }
+            }
+        });
+        try { localStorage.setItem('hyper_strategy_data_v6', JSON.stringify({ results: strategyResults })); } catch (e) {}
+    }
+
+    hyperAI.train();
+
+    var inputs = document.querySelectorAll('.match-input[data-match="' + idx + '"]');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].dataset.field !== 'actual') { inputs[i].value = ''; }
+    }
+    document.getElementById('preview' + idx).classList.remove('show');
+    document.getElementById('saveBtn' + idx).disabled = true;
+    previewData[idx] = null;
+    document.getElementById('aiAdvisor' + idx).classList.remove('show');
+
+    updateAccuracy();
+    updateBankDisplay();
+    saveInputData();
+
+    if (correct !== null) {
+        var msg = correct ? '✅ Гипервихрь верен! ' + match.bet + ' ' + match.line : '❌ Гипервихрь неверен. ' + match.bet + ' ' + match.line;
+        sendNotification('📊 Результат матча', match.teamA + ' — ' + match.teamB + ': ' + msg, false);
+        if (settings.sound) playSound(correct ? 'victory' : 'defeat');
+    }
+
+    alert('✅ Матч сохранён с гипервихревой формулой! Цель 90%!');
+}
+
+// --- ИСТОРИЯ ---
+var currentFilter = 'all';
+
+function setFilter(filter) {
+    currentFilter = filter;
+    var btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filter === filter);
+    });
+    renderHistory();
+}
+
+function renderHistory() {
+    var search = (document.getElementById('searchInp') ? document.getElementById('searchInp').value : '').toLowerCase();
+    var matches = getMatches();
+
+    if (currentFilter !== 'all') {
+        matches = matches.filter(function(m) {
+            if (currentFilter === 'tm') return m.bet === 'ТМ';
+            if (currentFilter === 'tb') return m.bet === 'ТБ';
+            if (currentFilter === 'win') return m.correct === true;
+            if (currentFilter === 'loss') return m.correct === false;
+            return true;
+        });
+    }
+
+    if (search) {
+        matches = matches.filter(function(m) {
+            var nm = (m.teamA || '') + (m.teamB || '');
+            return nm.toLowerCase().indexOf(search) !== -1;
+        });
+    }
+
+    var rated = matches.filter(function(m) { return m.correct !== null; });
+    var wins = rated.filter(function(m) { return m.correct; }).length;
+
+    document.getElementById('s-total').textContent = matches.length;
+    document.getElementById('s-wins').textContent = wins;
+    var acc = rated.length ? Math.round(wins / rated.length * 100) : null;
+    document.getElementById('s-acc').textContent = acc !== null ? acc + '%' : '—';
+
+    var odd = getOdd();
+    var roi = 0;
+    rated.forEach(function(m) {
+        if (m.correct === true) roi += odd - 1;
+        else roi -= 1;
+    });
+    document.getElementById('s-roi').textContent = roi !== 0 ? (roi > 0 ? '+' : '') + roi.toFixed(1) + ' юн.' : '0 юн.';
+
+    var list = document.getElementById('matchList');
+    if (!matches.length) {
+        list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text3);">Матчей нет</div>';
+        return;
+    }
+
+    var html = '';
+    for (var m = 0; m < Math.min(50, matches.length); m++) {
+        var mt = matches[m],
+            isSkip = mt.deviation < mt.threshold;
+        var confidenceColor = mt.confidence >= 85 ? '#3b82f6' : mt.confidence >= 70 ? 'var(--green)' : mt.confidence >= 60 ? 'var(--yellow)' : 'var(--red)';
+        var levelBadge = mt.level === 'perfect' ? ' 🎯90%' : mt.level === 'high' ? ' 🔥' : '';
+        var keyBadge = mt.keyUnlocked ? ' 🔑' : '';
+        html += '<div class="match-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+            '<div><div style="font-weight:600;">🌀 ' + (mt.teamA || '?') + ' — ' + (mt.teamB || '?') + '</div>' +
+            '<div style="font-size:9px;color:var(--text3);margin-top:3px;">' + (mt.league || '?') + ' · ' + (mt.date || '?') + ' ' + (mt.time || '') + ' · V:' + (mt.V ? Math.round(mt.V * 100) / 100 : '—') + ' Ω:' + (mt.Ω ? Math.round(mt.Ω * 100) / 100 : '—') + '</div></div>' +
+            '<span style="font-size:9px;background:rgba(59,130,246,0.2);color:#3b82f6;padding:2px 10px;border-radius:10px;">' + (mt.bet || '—') + levelBadge + keyBadge + '</span>' +
+            '</div>' +
+            '<div class="match-nums" style="display:flex;gap:6px;margin:8px 0;">' +
+            '<div class="mnum" style="background:var(--bg);border-radius:8px;padding:6px;text-align:center;flex:1;border:1px solid var(--border);"><div class="mnum-val" style="font-weight:700;">' + (mt.half1 || '—') + '</div><div class="mnum-lbl" style="font-size:7px;color:var(--text3);text-transform:uppercase;">1-я</div></div>' +
+            '<div class="mnum" style="background:var(--bg);border-radius:8px;padding:6px;text-align:center;flex:1;border:1px solid var(--border);"><div class="mnum-val" style="font-weight:700;">' + (mt.half2 || '—') + '</div><div class="mnum-lbl" style="font-size:7px;color:var(--text3);text-transform:uppercase;">2-я</div></div>' +
+            '<div class="mnum" style="background:var(--bg);border-radius:8px;padding:6px;text-align:center;flex:1;border:1px solid var(--border);"><div class="mnum-val" style="font-weight:700;">' + (mt.total || '—') + '</div><div class="mnum-lbl" style="font-size:7px;color:var(--text3);text-transform:uppercase;">прогноз</div></div>' +
+            '<div class="mnum" style="background:var(--bg);border-radius:8px;padding:6px;text-align:center;flex:1;border:1px solid var(--border);"><div class="mnum-val" style="font-weight:700;">' + (mt.line || '—') + '</div><div class="mnum-lbl" style="font-size:7px;color:var(--text3);text-transform:uppercase;">линия</div></div>' +
+            '</div>' +
+            '<div style="display:flex;justify-content:space-between;font-size:13px;align-items:center;">' +
+            '<span>' + (mt.correct === true ? '✅' : mt.correct === false ? '❌' : '⏳') + ' ' + (isSkip ? '⏸️' : '') +
+            ' <span style="font-size:9px;color:' + confidenceColor + ';">' + (mt.confidence ? Math.round(mt.confidence) + '%' : '') + '</span></span>' +
+            '<span style="font-size:10px;color:var(--text3);">🌀 ' + (mt.level || '—') + ' ' + (mt.deviation ? Math.round(mt.deviation) + '%' : '') + '</span>' +
+            '</div></div>';
+    }
+    list.innerHTML = html;
+    updateBankDisplay();
+}
+
+// --- СТАТИСТИКА ---
+function renderStats() {
+    var matches = getMatches();
+    var rated = matches.filter(function(m) { return m.correct !== null; });
+
+    var streak = 0,
+        best = 0;
+    if (rated.length) {
+        streak = 1;
+        for (var s = 1; s < rated.length; s++) {
+            if (rated[s].correct === rated[s - 1].correct) streak++;
+            else break;
+        }
+        var cur = 0;
+        for (var t = 0; t < rated.length; t++) {
+            if (t === 0 || rated[t].correct === rated[t - 1].correct) cur++;
+            else cur = 1;
+            if (rated[t].correct && cur > best) best = cur;
+        }
+    }
+    document.getElementById('streakVal').textContent = rated.length ? (rated[0].correct ? '✅' : '❌') + ' ' + streak : '—';
+    document.getElementById('bestStreak').textContent = best || '—';
+
+    var odd = getOdd();
+    var bank = 1000;
+    var bets = 0;
+    rated.forEach(function(m) {
+        if (m.correct === true) { bank += (odd - 1); } else { bank -= 1; }
+        bets++;
+    });
+    document.getElementById('bankCurrent').textContent = Math.round(bank);
+    var change = bank - 1000;
+    var changeEl = document.getElementById('bankChange');
+    changeEl.textContent = (change >= 0 ? '+' : '') + change;
+    changeEl.style.color = change >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('bankBets').textContent = bets;
+
+    var avgV = 0,
+        avgΩ = 0,
+        avgT = 0,
+        avgF = 0,
+        cnt = 0;
+    rated.forEach(function(m) {
+        if (m.V !== undefined) { avgV += m.V;
+            cnt++; }
+        if (m.Ω !== undefined) avgΩ += m.Ω;
+        if (m.T !== undefined) avgT += m.T;
+        if (m.totalFactor !== undefined) avgF += m.totalFactor;
+    });
+    if (cnt > 0) {
+        document.getElementById('avgVortex').textContent = Math.round(avgV / cnt * 100) / 100;
+        document.getElementById('avgChaos').textContent = Math.round(avgΩ / cnt * 100) / 100;
+        document.getElementById('avgTensor').textContent = Math.round(avgT / cnt * 100) / 100;
+        document.getElementById('avgFactors').textContent = Math.round(avgF / cnt * 100) / 100;
+    }
+
+    // Банк-график
+    var bankChart = document.getElementById('bankChart');
+    var bankHistory = [1000];
+    var currentBank = 1000;
+    rated.slice().reverse().forEach(function(m) {
+        if (m.correct === true) currentBank += (odd - 1);
+        else currentBank -= 1;
+        bankHistory.push(currentBank);
+    });
+    var maxBank = Math.max.apply(null, bankHistory);
+    var minBank = Math.min.apply(null, bankHistory);
+    var range = maxBank - minBank || 1;
+    var chartHtml = '';
+    bankHistory.forEach(function(b) {
+        var height = ((b - minBank) / range * 80) + 20;
+        var color = b >= 1000 ? 'var(--green)' : 'var(--red)';
+        chartHtml += '<div class="chart-bar" style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;"><div class="fill" style="width:100%;border-radius:4px 4px 0 0;opacity:.7;min-height:4px;height:' + height + '%;background:' + color + ';"></div></div>';
+    });
+    bankChart.innerHTML = chartHtml;
+
+    // Стратегии
+    var strategyResults = {};
+    try {
+        var sd = localStorage.getItem('hyper_strategy_data_v6');
+        if (sd) { var parsed = JSON.parse(sd);
+            strategyResults = parsed.results || {}; }
+    } catch (e) {}
+    var strategies = [
+        { id: 'conservative', name: 'Консервативная' },
+        { id: 'moderate', name: 'Умеренная' },
+        { id: 'aggressive', name: 'Агрессивная' }
+    ];
+    var strategyGrid = document.getElementById('strategyGrid');
+    var strategyHtml = '';
+    strategies.forEach(function(s) {
+        var r = strategyResults[s.id];
+        if (!r) { strategyHtml += '<div class="strategy-card" style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--border);"><div class="strategy-name" style="font-weight:600;font-size:12px;">' + s.name + '</div><div style="font-size:11px;color:var(--text3);">Нет данных</div></div>'; return; }
+        var roi = r.totalBets ? ((r.bankroll - 1000) / 1000 * 100) : 0;
+        var acc2 = r.totalBets ? Math.round(r.wins / r.totalBets * 100) : 0;
+        strategyHtml += '<div class="strategy-card" style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--border);">' +
+            '<div class="strategy-name" style="font-weight:600;font-size:12px;">🌀 ' + s.name + '</div>' +
+            '<div class="strategy-roi" style="font-size:18px;font-weight:700;color:' + (roi >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + (roi >= 0 ? '+' : '') + roi.toFixed(1) + '%</div>' +
+            '<div class="strategy-stats" style="font-size:9px;color:var(--text3);">' + acc2 + '% (' + r.wins + '/' + r.totalBets + ') · Банк: ' + Math.round(r.bankroll) + '</div></div>';
+    });
+    strategyGrid.innerHTML = strategyHtml;
+
+    // Heatmap
+    var leagueStats = {};
+    for (var l = 0; l < rated.length; l++) {
+        var r = rated[l],
+            ln = r.league || 'Другая';
+        if (!leagueStats[ln]) leagueStats[ln] = { total: 0, wins: 0 };
+        leagueStats[ln].total++;
+        if (r.correct === true) leagueStats[ln].wins++;
+    }
+    var heatmapEl = document.getElementById('heatmapGrid');
+    var lk = Object.keys(leagueStats);
+    if (!lk.length) {
+        heatmapEl.innerHTML = '<div style="color:var(--text3);font-size:13px;">Нет данных</div>';
+    } else {
+        var h2 = '';
+        for (var lg = 0; lg < lk.length; lg++) {
+            var lk2 = lk[lg],
+                ld = leagueStats[lk2],
+                la = ld.total ? Math.round(ld.wins / ld.total * 100) : 0;
+            var color = la >= 60 ? '#3b82f6' : la >= 50 ? '#fbbf24' : '#f87171';
+            h2 += '<div class="heatmap-item" style="display:flex;justify-content:space-between;padding:6px 10px;border-radius:6px;background:var(--bg);border:1px solid var(--border);">' +
+                '<span>' + lk2 + '</span>' +
+                '<span style="font-weight:700;color:' + color + ';">' + la + '%</span></div>' +
+                '<div class="heatmap-bar" style="height:4px;border-radius:4px;margin-top:4px;width:100%;background:var(--bg);"><div style="width:' + la + '%;height:100%;background:' + color + ';border-radius:4px;opacity:' + (0.3 + la / 100 * 0.7) + ';"></div></div>';
+        }
+        heatmapEl.innerHTML = h2;
+    }
+    updateBankDisplay();
+}
+
+// --- ОТЧЁТ ---
+function generateDailyReport() {
+    var matches = getMatches();
+    var today = new Date().toLocaleDateString('ru');
+    var todayMatches = matches.filter(function(m) { return m.date === today; });
+    var el = document.getElementById('dailyReportContent');
+    if (!todayMatches.length) {
+        el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0;">Сегодня матчей нет для гипер-отчёта</div>';
+        return;
+    }
+    var html = '<div style="font-size:11px;color:var(--text2);margin-bottom:12px;">🌀 Гипер-отчёт за ' + today + ' — ' + todayMatches.length + ' матчей</div>';
+    var winsToday = 0,
+        totalToday = 0;
+    todayMatches.forEach(function(m) {
+        if (m.correct !== null) { totalToday++; if (m.correct) winsToday++; }
+        var isSkip = m.deviation < m.threshold;
+        var levelBadge = m.level === 'perfect' ? ' 🎯90%' : m.level === 'high' ? ' 🔥' : '';
+        var keyBadge = m.keyUnlocked ? ' 🔑' : '';
+        html += '<div class="daily-report-item" style="background:var(--card);border-radius:8px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<span style="font-weight:600;font-size:13px;">🌀 ' + m.teamA + ' — ' + m.teamB + '</span>' +
+            '<span class="report-badge ' + (isSkip ? 'skip' : m.bet === 'ТМ' ? 'bet' : 'bet') + '" style="font-size:8px;padding:2px 10px;border-radius:100px;margin-left:8px;' + (isSkip ? 'background:rgba(251,191,36,0.1);color:var(--yellow);' : 'background:var(--green-bg);color:var(--green);') + '">' +
+            (isSkip ? '⏸️ ПРОПУСК' : m.bet + levelBadge) +
+            (m.correct !== null ? (m.correct ? ' ✅' : ' ❌') : '') + keyBadge +
+            '</span></div>' +
+            '<div style="font-size:11px;color:var(--text2);margin-top:4px;">Прогноз: ' + Math.round(m.total) + ' | Линия: ' + m.line + ' | V:' + (m.V ? Math.round(m.V * 100) / 100 : '—') + ' Ω:' + (m.Ω ? Math.round(m.Ω * 100) / 100 : '—') +
+            '</div></div>';
+    });
+    if (totalToday > 0) {
+        var accToday = Math.round(winsToday / totalToday * 100);
+        html += '<div style="margin-top:12px;padding:12px;background:var(--bg);border-radius:8px;text-align:center;">🌀 Гипер-точность: <span style="font-weight:700;color:' + (accToday >= 70 ? '#3b82f6' : accToday >= 60 ? 'var(--yellow)' : 'var(--red)') + ';">' +
+            accToday + '% (' + winsToday + '/' + totalToday + ')</span></div>';
+    }
+    el.innerHTML = html;
+}
+
+// --- ЭКСПОРТ CSV ---
+function exportCSV() {
+    var matches = getMatches();
+    if (!matches.length) { alert('❌ Нет данных для экспорта'); return; }
+    var headers = ['Дата', 'Время', 'Команда А', 'Команда Б', 'Лига', 'Прогноз', 'Линия', 'Итог', 'Результат', 'V', 'Ω', 'T', 'I', 'Факторы', 'Отклонение', 'Уверенность', 'Уровень'];
+    var rows = [headers.join(';')];
+    matches.forEach(function(m) {
+        var result = m.correct === true ? 'Верно' : m.correct === false ? 'Неверно' : 'Ожидание';
+        rows.push([
+            m.date || '', m.time || '', m.teamA || '', m.teamB || '',
+            m.league || '', m.bet || '', m.line || '', Math.round(m.total || 0),
+            result, m.V ? Math.round(m.V * 100) / 100 : '—', m.Ω ? Math.round(m.Ω * 100) / 100 : '—',
+            m.T ? Math.round(m.T * 100) / 100 : '—', m.I ? Math.round(m.I * 100) / 100 : '—',
+            m.totalFactor ? Math.round(m.totalFactor * 100) / 100 : '—',
+            Math.round(m.deviation || 0) + '%', Math.round(m.confidence || 0) + '%', m.level || '—'
+        ].join(';'));
+    });
+    var blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'hyper_report_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+}
+
+// --- ИНТЕРФЕЙС ---
+function switchTab(name) {
+    var names = ['input', 'history', 'stats', 'report', 'settings'];
+    var tabs = document.querySelectorAll('.tab');
+    for (var i = 0; i < tabs.length; i++) { tabs[i].classList.toggle('active', names[i] === name); }
+    var pages = document.querySelectorAll('.page');
+    for (var j = 0; j < pages.length; j++) { pages[j].classList.remove('active'); }
+    var page = document.getElementById('page-' + name);
+    if (page) page.classList.add('active');
+    if (name === 'history') renderHistory();
+    if (name === 'stats') renderStats();
+    if (name === 'report') generateDailyReport();
+    updateDots();
+}
+
+function switchMatch(idx) {
+    var matchBtns = document.querySelectorAll('.tab[data-match]');
+    for (var i = 0; i < matchBtns.length; i++) { matchBtns[i].classList.toggle('active', i === idx); }
+    var containers = document.querySelectorAll('.match-container');
+    for (var j = 0; j < containers.length; j++) { containers[j].style.display = j === idx ? 'block' : 'none'; }
+    calcPreview(idx);
+}
+
+function onLeagueChange(idx) {
+    var select = document.querySelector('.match-input[data-match="' + idx + '"][data-field="league"]');
+    var custom = document.getElementById('customLeague' + idx);
+    if (select && custom) custom.style.display = select.value === 'custom' ? 'block' : 'none';
+    calcPreview(idx);
+    saveInputData();
+}
+
+function setTheme(name) {
+    document.body.className = 'theme-' + name;
+    try { localStorage.setItem('hyper_theme_v6', name); } catch (e) {}
+    var btns = document.querySelectorAll('.theme-btn');
+    for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+    var btn = document.getElementById('btn-' + name);
+    if (btn) btn.classList.add('active');
+}
+
+function updateLeagueAvg() {
+    var v = parseFloat(document.getElementById('leagueAvg').value);
+    if (!isNaN(v) && v > 0) { try { localStorage.setItem('hyper_league_avg_v6', v); } catch (e) {} }
+}
+
+function updateThreshold() {
+    var v = parseFloat(document.getElementById('thresholdInput').value);
+    if (!isNaN(v) && v > 0 && v <= 100) {
+        try { localStorage.setItem('hyper_threshold_v6', v); } catch (e) {}
+        calcPreview(0);
+        calcPreview(1);
+    }
+}
+
+function updateOdd() {
+    var v = parseFloat(document.getElementById('oddInput').value);
+    if (!isNaN(v) && v > 0) { try { localStorage.setItem('hyper_odd_v6', v); } catch (e) {} }
+}
+
+function updateAccuracy() {
+    var matches = getMatches(),
+        rated = matches.filter(function(m) { return m.correct !== null; });
+    var wins = rated.filter(function(m) { return m.correct; }).length;
+    var acc = rated.length ? Math.round(wins / rated.length * 100) : null;
+    var el = document.getElementById('accNum');
+    if (el) {
+        el.textContent = acc !== null ? acc + '%' : '—';
+        if (acc !== null && acc >= 85) el.className = 'acc-num perfect';
+        else el.className = 'acc-num ' + (acc === null ? '' : acc >= 60 ? 'high' : acc >= 50 ? 'medium' : 'low');
+    }
+    document.getElementById('accSub').textContent = rated.length ? wins + ' из ' + rated.length : 'нет данных';
+    updateBankDisplay();
+}
+
+function updateDots() {
+    var container = document.getElementById('pageDots');
+    if (!container) return;
+    var names = ['input', 'history', 'stats', 'report', 'settings'];
+    var active = document.querySelector('.tab.active');
+    var idx = Array.prototype.indexOf.call(document.querySelectorAll('.tab'), active);
+    var html = '';
+    for (var i = 0; i < names.length; i++) {
+        html += '<div class="dot ' + (i === idx ? 'active' : '') + '" onclick="switchTab(\'' + names[i] + '\')"></div>';
+    }
+    container.innerHTML = html;
+}
+
+function saveInputData() {
+    var data = {},
+        inputs = document.querySelectorAll('.match-input, .match-input select');
+    for (var i = 0; i < inputs.length; i++) {
+        var el = inputs[i];
+        var m = el.getAttribute('data-match');
+        var f = el.getAttribute('data-field');
+        if (m !== null && f !== null) {
+            if (!data[m]) data[m] = {};
+            data[m][f] = el.value;
+        }
+    }
+    try { localStorage.setItem('hyper_input_data_v6', JSON.stringify(data)); } catch (e) {}
+}
+
+function restoreInputData() {
+    try {
+        var raw = localStorage.getItem('hyper_input_data_v6');
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        var inputs = document.querySelectorAll('.match-input, .match-input select');
+        for (var i = 0; i < inputs.length; i++) {
+            var el = inputs[i];
+            var m = el.getAttribute('data-match');
+            var f = el.getAttribute('data-field');
+            if (m !== null && f !== null && data[m] && data[m][f] !== undefined) {
+                el.value = data[m][f];
+            }
+        }
+        onLeagueChange(0);
+        onLeagueChange(1);
+        calcPreview(0);
+        calcPreview(1);
+    } catch (e) {}
+}
+
+function updateBankDisplay() {
+    var matches = getMatches();
+    var rated = matches.filter(function(m) { return m.correct !== null; });
+    var odd = getOdd();
+    var bank = 1000;
+    rated.forEach(function(m) {
+        if (m.correct === true) { bank += (odd - 1); } else { bank -= 1; }
+    });
+    var bankText = Math.round(bank) + ' юн.';
+    document.getElementById('settingsBank').textContent = bankText;
+}
+
+// --- ГЕНЕРАЦИЯ МАТЧЕЙ ---
+function generateMatchHTML(idx) {
+    var label = idx === 0 ? 'МАТЧ 1' : 'МАТЧ 2';
+    var suffix = idx;
+    return '<div class="match-container" data-match="' + idx + '" style="' + (idx > 0 ? 'display:none;' : '') + '">' +
+        '<div class="card"><div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:12px;"><span>Команды</span><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 10px;border-radius:10px;font-size:9px;">' + label + '</span></div>' +
+        '<div class="row2"><div class="field"><div class="label">Команда А (хозяева)</div><input class="inp match-input" data-match="' + idx + '" data-field="teamA" placeholder="Название" oninput="autoDetectLeague(' + idx + '); saveInputData(); debouncedCalcPreview(' + idx + ')"></div>' +
+        '<div class="field"><div class="label">Команда Б (гости)</div><input class="inp match-input" data-match="' + idx + '" data-field="teamB" placeholder="Название" oninput="autoDetectLeague(' + idx + '); saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div>' +
+        '<div class="field"><div class="label">Лига <span id="detectedLeague' + idx + '" style="font-size:9px;color:#3b82f6;"></span></div>' +
+        '<select class="inp inp-select match-input" data-match="' + idx + '" data-field="league" onchange="onLeagueChange(' + idx + '); saveInputData(); debouncedCalcPreview(' + idx + ')">' +
+        '<option value="auto">🧠 Авто</option><option value="China">🇨🇳 Китай</option><option value="Australia">🇦🇺 Австралия</option><option value="Morocco">🇲🇦 Марокко</option><option value="Euroleague">🇪🇺 Евролига</option><option value="NBA">🇺🇸 НБА</option><option value="Spain">🇪🇸 Испания</option><option value="Turkey">🇹🇷 Турция</option><option value="Germany">🇩🇪 Германия</option><option value="Greece">🇬🇷 Греция</option><option value="Israel">🇮🇱 Израиль</option><option value="Senegal">🇸🇳 Сенегал</option><option value="Korea">🇰🇷 Корея</option><option value="Japan">🇯🇵 Япония</option><option value="Brazil">🇧🇷 Бразилия</option><option value="Italy">🇮🇹 Италия</option><option value="France">🇫🇷 Франция</option><option value="Poland">🇵🇱 Польша</option><option value="custom">✏️ Своя</option></select></div>' +
+        '<div class="custom-league-fields" id="customLeague' + idx + '" style="display:none;margin-top:8px;"><div class="row2"><div class="field"><div class="label">Название</div><input class="inp match-input" data-match="' + idx + '" data-field="customLeagueName" placeholder="Например: Венгрия" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div><div class="field"><div class="label">Средний тотал</div><input class="inp match-input" data-match="' + idx + '" data-field="customLeagueAvg" placeholder="90" inputmode="decimal" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div></div>' +
+        '<div class="field"><div class="label">Домашняя команда <span style="font-size:9px;color:var(--text3);">(+5% фактор)</span></div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="homeTeam" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="">Не выбрано</option><option value="home">Команда А (хозяева)</option><option value="away">Команда Б (хозяева)</option></select></div></div>' +
+
+        '<div class="card"><div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:12px;"><span>ДОПОЛНИТЕЛЬНЫЕ ФАКТОРЫ ДЛЯ 90%</span><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 10px;border-radius:10px;font-size:9px;">17+ ФАКТОРОВ</span></div>' +
+        '<div class="row2"><div class="field"><div class="label">Форма А (1-10)</div><input class="inp match-input" data-match="' + idx + '" data-field="formA" placeholder="8" inputmode="decimal" value="7" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div><div class="field"><div class="label">Форма Б (1-10)</div><input class="inp match-input" data-match="' + idx + '" data-field="formB" placeholder="7" inputmode="decimal" value="7" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div>' +
+        '<div class="row2"><div class="field"><div class="label">Мотивация хозяев</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="motivationHome" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1">🔥 Высокая</option><option value="0.7" selected>⚖️ Средняя</option><option value="0.4">😴 Низкая</option></select></div><div class="field"><div class="label">Мотивация гостей</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="motivationAway" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1">🔥 Высокая</option><option value="0.7" selected>⚖️ Средняя</option><option value="0.4">😴 Низкая</option></select></div></div>' +
+        '<div class="row2"><div class="field"><div class="label">Травмы А</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="injuriesA" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1">✅ Нет</option><option value="0.8" selected>⚠️ 1 игрок</option><option value="0.6">❌ 2+ игроков</option></select></div><div class="field"><div class="label">Травмы Б</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="injuriesB" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1">✅ Нет</option><option value="0.8" selected>⚠️ 1 игрок</option><option value="0.6">❌ 2+ игроков</option></select></div></div>' +
+        '<div class="row2"><div class="field"><div class="label">Отдых хозяев (дней)</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="restHome" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1.1">🔥 3+ дня</option><option value="1" selected>⚖️ 2 дня</option><option value="0.9">😴 1 день</option><option value="0.8">🥱 0 дней</option></select></div><div class="field"><div class="label">Отдых гостей (дней)</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="restAway" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1.1">🔥 3+ дня</option><option value="1" selected>⚖️ 2 дня</option><option value="0.9">😴 1 день</option><option value="0.8">🥱 0 дней</option></select></div></div>' +
+        '<div class="row2"><div class="field"><div class="label">🏠 Домашняя серия</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="homeSeries" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1.10">🔥 6+ игр дома</option><option value="1.05">📈 3-5 игр дома</option><option value="1.00" selected>⚖️ 1-2 игры</option><option value="0.95">🏠 Первая дома</option></select></div><div class="field"><div class="label">✈️ Турне (игр)</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="tourFactor" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1.00" selected>🏠 Дома</option><option value="0.98">✈️ 1-2 игры</option><option value="0.95">✈️ 3-5 игр</option><option value="0.90">✈️ 6+ игр</option><option value="0.88">🚀 Последняя</option></select></div></div>' +
+        '<div class="row2"><div class="field"><div class="label">Плей-офф</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="playoff" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1.1">🔥 Да</option><option value="1" selected>⚖️ Нет</option><option value="0.9">📉 Плей-аут</option></select></div><div class="field"><div class="label">Перелёт (часов)</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="travel" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1">🏠 Дома</option><option value="0.95" selected>✈️ 1-2 ч</option><option value="0.9">✈️ 3-5 ч</option><option value="0.8">✈️ 6+ ч</option></select></div></div>' +
+        '<div class="field"><div class="label">Судья (стиль)</div><select class="inp inp-select match-input" data-match="' + idx + '" data-field="referee" onchange="saveInputData(); debouncedCalcPreview(' + idx + ')"><option value="1.05">📈 Либеральный</option><option value="1" selected>⚖️ Нейтральный</option><option value="0.95">📉 Строгий</option></select></div></div>' +
+
+        '<div class="card"><div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:12px;"><span>Четверти</span><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 10px;border-radius:10px;font-size:9px;">Прогноз 90%</span></div>' +
+        '<div class="q-grid"><div class="q-block"><div class="q-label">Q1</div><div class="q-inputs"><input class="q-inp match-input" data-match="' + idx + '" data-field="q1a" placeholder="А" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"><input class="q-inp match-input" data-match="' + idx + '" data-field="q1b" placeholder="Б" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div>' +
+        '<div class="q-block"><div class="q-label">Q2</div><div class="q-inputs"><input class="q-inp match-input" data-match="' + idx + '" data-field="q2a" placeholder="А" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"><input class="q-inp match-input" data-match="' + idx + '" data-field="q2b" placeholder="Б" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div>' +
+        '<div class="q-block"><div class="q-label">Q3</div><div class="q-inputs"><input class="q-inp match-input" data-match="' + idx + '" data-field="q3a" placeholder="А" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"><input class="q-inp match-input" data-match="' + idx + '" data-field="q3b" placeholder="Б" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div>' +
+        '<div class="q-block"><div class="q-label">Q4</div><div class="q-inputs"><input class="q-inp match-input" data-match="' + idx + '" data-field="q4a" placeholder="А" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"><input class="q-inp match-input" data-match="' + idx + '" data-field="q4b" placeholder="Б" inputmode="numeric" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div></div>' +
+        '<div class="field"><div class="label">Линия тотала</div><input class="inp match-input" data-match="' + idx + '" data-field="line" placeholder="169.5" inputmode="decimal" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div>' +
+        '<div class="field"><div class="label">H2H средний тотал</div><input class="inp match-input" data-match="' + idx + '" data-field="h2hAvg" placeholder="90" inputmode="decimal" oninput="saveInputData(); debouncedCalcPreview(' + idx + ')"></div></div>' +
+
+        '<div class="preview" id="preview' + idx + '"><div style="font-size:10px;letter-spacing:2px;color:#3b82f6;margin-bottom:10px;">🌀 ГИПЕРВИХРЕВОЙ ПРОГНОЗ (ЦЕЛЬ 90%)</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div><div style="font-size:10px;color:var(--text2);">ИТОГ МАТЧА</div><div class="preview-total" id="p-total' + idx + '">—</div></div><div class="preview-bet" id="p-bet' + idx + '">—</div></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:8px;"><div style="font-size:8px;color:var(--text3);text-align:center;">1-я пол.<br><span id="p-half1-' + idx + '" style="color:var(--text);font-weight:700;">—</span></div><div style="font-size:8px;color:var(--text3);text-align:center;">2-я пол.<br><span id="p-half2-' + idx + '" style="color:var(--text);font-weight:700;">—</span></div><div style="font-size:8px;color:var(--text3);text-align:center;">Q3<br><span id="p-q3-' + idx + '" style="color:var(--text);font-weight:700;">—</span></div><div style="font-size:8px;color:var(--text3);text-align:center;">Q4<br><span id="p-q4-' + idx + '" style="color:var(--text);font-weight:700;">—</span></div></div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;"><div style="font-size:9px;color:var(--text3);">Отклонение: <span id="p-deviation' + idx + '" style="color:#3b82f6;font-weight:700;">—</span></div><div style="font-size:9px;color:var(--text3);">Решение: <span id="p-decision' + idx + '" style="font-weight:700;">—</span></div><div style="font-size:9px;color:var(--text3);">Точность: <span id="p-confidence' + idx + '" style="color:#3b82f6;font-weight:700;">—</span></div></div>' +
+        '<div class="vars"><div class="var-box"><div class="var-val" id="p-vortex' + idx + '">—</div><div class="var-lbl">V вихрь</div></div><div class="var-box"><div class="var-val" id="p-chaos' + idx + '">—</div><div class="var-lbl">Ω хаос</div></div><div class="var-box"><div class="var-val" id="p-tensor' + idx + '">—</div><div class="var-lbl">T давление</div></div><div class="var-box"><div class="var-val" id="p-inertia' + idx + '">—</div><div class="var-lbl">I инерция</div></div><div class="var-box"><div class="var-val" id="p-factors' + idx + '" style="font-size:9px;">—</div><div class="var-lbl">Σ факторы</div></div></div>' +
+        '<div class="multi-line-grid" id="multiLineGrid' + idx + '"><div class="multi-item"><div class="multi-bet tm" id="ml1-' + idx + '">—</div><div class="multi-conf"><span class="conf-dot" id="confDot1-' + idx + '"></span><span id="mc1-' + idx + '">—</span></div><div class="multi-bar-wrap"><div class="multi-bar" id="multiBar1-' + idx + '" style="width:0%"></div></div></div>' +
+        '<div class="multi-item main" id="multiMain' + idx + '"><div class="multi-bet" id="ml2-' + idx + '">—</div><div class="multi-conf"><span class="conf-dot" id="confDot2-' + idx + '"></span><span id="mc2-' + idx + '">—</span></div><div class="multi-bar-wrap"><div class="multi-bar" id="multiBar2-' + idx + '" style="width:0%"></div></div></div>' +
+        '<div class="multi-item"><div class="multi-bet tb" id="ml3-' + idx + '">—</div><div class="multi-conf"><span class="conf-dot" id="confDot3-' + idx + '"></span><span id="mc3-' + idx + '">—</span></div><div class="multi-bar-wrap"><div class="multi-bar" id="multiBar3-' + idx + '" style="width:0%"></div></div></div></div>' +
+        '<div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:6px;border:1px solid rgba(59,130,246,0.2);"><div style="font-size:8px;color:var(--text3);letter-spacing:1px;">🌀 Ψ = (ΣQ × (1+Ω) × T × I × Факторы) + (V/100)×Бонус</div></div></div>' +
+
+        '<div class="ai-card" id="aiAdvisor' + idx + '"><div class="header" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span class="icon" style="font-size:24px;">🌀</span><span class="title" style="font-size:14px;font-weight:600;">Гипервихревой AI</span><span class="status perfect" id="aiStatus' + idx + '">🔒 заблокирован</span></div><div class="advice" id="aiAdvice' + idx + '">🔑 Активируйте ключ 123 для полного доступа</div><div class="confidence-wrap"><div class="confidence-label"><span>Уверенность</span><span id="aiConfLabel' + idx + '">0%</span></div><div class="confidence-bar"><div class="fill" id="aiConfidence' + idx + '" style="width:0%"></div></div></div><div class="tags" id="aiTags' + idx + '"></div></div>' +
+
+        '<div class="field"><div class="label">Фактический итог</div><input class="inp match-input" data-match="' + idx + '" data-field="actual" placeholder="после финала" inputmode="decimal" oninput="saveInputData()"></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><button class="btn hyper" id="saveBtn' + idx + '" onclick="saveMatch(' + idx + ')" disabled>💾 Сохранить</button><button class="btn gold" onclick="runAIAnalysis(' + idx + ')">🌀 Гипер-анализ</button></div>' +
+        '<button class="btn" onclick="scheduleReminder(' + idx + ')" style="margin-top:8px;">⏰ Напомнить за 15 мин</button></div>';
+}
+
+// --- БЭКАП ---
+function exportFullJSON() {
+    var data = {
+        version: 'v6.1',
+        name: 'Квантовый Гипервихрь',
+        target: '90%',
+        key: KEY_UNLOCKED ? '123' : 'не активирован',
+        matches: getMatches(),
+        leagueAvg: parseFloat(localStorage.getItem('hyper_league_avg_v6')) || 95,
+        threshold: getThreshold(),
+        odd: getOdd(),
+        theme: localStorage.getItem('hyper_theme_v6'),
+        quantumBonus: quantumBonus,
+        aiWeights: hyperAI.weights,
+        settings: settings,
+        voiceConfig: voiceConfig
+    };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'hyper_backup_v6_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+}
+
+function importFullJSON(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            if (data.matches && Array.isArray(data.matches)) setMatches(data.matches);
+            if (data.leagueAvg && !isNaN(data.leagueAvg)) { try { localStorage.setItem('hyper_league_avg_v6', data.leagueAvg); } catch (e) {} }
+            if (data.threshold && !isNaN(data.threshold)) { try { localStorage.setItem('hyper_threshold_v6', data.threshold); } catch (e) {} }
+            if (data.odd && !isNaN(data.odd)) { try { localStorage.setItem('hyper_odd_v6', data.odd); } catch (e) {} }
+            if (data.theme) setTheme(data.theme);
+            if (data.quantumBonus) quantumBonus = data.quantumBonus;
+            if (data.aiWeights) { hyperAI.weights = data.aiWeights;
+                hyperAI.saveWeights(); }
+            if (data.settings) { for (var key in data.settings) { if (settings.hasOwnProperty(key)) settings[key] = data.settings[key]; } saveSettings();
+                updateToggles(); }
+            if (data.voiceConfig) { voiceConfig = data.voiceConfig;
+                saveVoiceConfig(); }
+            if (data.key === '123') {
+                KEY_UNLOCKED = true;
+                localStorage.setItem('hyper_key_unlocked', 'true');
+                activateKeyMode();
+            }
+            alert('✅ Гипер-бэкап восстановлен! Цель 90%!');
+            location.reload();
+        } catch (err) { alert('❌ Ошибка: ' + err.message); }
+    };
+    reader.readAsText(file);
+}
+
+function clearAllData() {
+    if (confirm('⚠️ Удалить все гипер-данные? Цель 90% будет потеряна!')) {
+        try {
+            localStorage.removeItem('hyper_matches_v6');
+            localStorage.removeItem('hyper_input_data_v6');
+            localStorage.removeItem('hyper_strategy_data_v6');
+            localStorage.removeItem('hyper_ai_weights_v6');
+            localStorage.removeItem('hyper_settings_v6');
+            localStorage.removeItem('hyper_voice_config_v6');
+            localStorage.removeItem('hyper_theme_v6');
+            localStorage.removeItem('hyper_threshold_v6');
+            localStorage.removeItem('hyper_odd_v6');
+            localStorage.removeItem('hyper_league_avg_v6');
+            localStorage.removeItem('hyper_bonus_v6');
+            localStorage.removeItem('hyper_key_unlocked');
+            KEY_UNLOCKED = false;
+            alert('✅ Все гипер-данные очищены');
+            location.reload();
+        } catch (e) { alert('❌ Ошибка: ' + e.message); }
+    }
+}
+
+// --- ИНИЦИАЛИЗАЦИЯ ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Генерируем матчи
+    document.getElementById('matchContainer').innerHTML = generateMatchHTML(0) + generateMatchHTML(1);
+
+    loadSettings();
+    loadVoiceConfig();
+
+    var theme = localStorage.getItem('hyper_theme_v6') || 'dark';
+    setTheme(theme);
+
+    document.getElementById('leagueAvg').value = getLeagueAvgValue();
+    document.getElementById('thresholdInput').value = getThreshold();
+    document.getElementById('oddInput').value = getOdd();
+    document.getElementById('quantumBonus').value = quantumBonus;
+
+    restoreInputData();
+    updateAccuracy();
+    hyperAI.train();
+    updateDots();
+    updateBankDisplay();
+
+    if (window.speechSynthesis) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+    }
+
+    requestNotificationPermission();
+    document.getElementById('liveStatus').textContent = '⚡ Live';
+    checkKeyOnLoad();
+
+    console.log('🌀 КВАНТОВЫЙ ГИПЕРВИХРЬ v6.1 загружен!');
+    console.log('🎯 ЦЕЛЬ: 90% ТОЧНОСТИ!');
+});
+</script>
+</body>
+</html>
+</script>
+</body>
+</html>
